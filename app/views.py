@@ -15,6 +15,12 @@ def changecompany(request):
 def createcompony(request):
     return render(request, 'createcompony.html')
 
+def createcompony(request):
+    return render(request, 'createcompony.html')
+
+def createcompony(request):
+    return render(request, 'createcompony.html')
+
 def crtecompony(request):
     if request.method=='POST':
         comname=request.POST['componyname']
