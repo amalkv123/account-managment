@@ -14,6 +14,8 @@ urlpatterns = [
     path('payheads2',views.payheads2,name='payheads2'),
     path('add_payhead',views.add_payhead,name='add_payhead'),
     path('profitgroup',views.profitgroup,name='profitgroup'),
+    path('expence',views.expence,name='expence'),
+    path('expensemonth/<int:pk>',views.expensemonth,name='expensemonth'),
    
 
 

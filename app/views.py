@@ -75,6 +75,14 @@ def profit(request):
 def profitgroup(request):
     return render(request, 'profitgroup.html')
 
+def expence(request):
+    data=create_payhead.objects.all()
+    return render(request, 'expence.html',{'p':data})
+
+def expensemonth(request,pk):
+    data=create_payhead.objects.get(id=pk)
+    return render(request,'expensemonth.html',{'p':data})
+
 def stockgroup(request):
     return render(request, 'stockgroup.html')
 
