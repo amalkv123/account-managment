@@ -1,125 +1,159 @@
-
 {% extends 'base.html' %}
-
-
-{% block body %}
-
-<style type="text/css">
-
-
-    .b1{
-        height: 600px;
+    {% block body %}
+    {% load static %}
+    <style>
         
-    }
-    
-    .head{
-        border-bottom: 1px solid;
-        /* border-bottom: 1px solid; */
-    
-    }
-    
-    .par{
-        letter-spacing: 2px;
-     
-        padding: 15px;
-    
-    }
-    .ul{
+
+        .form-popup {
+        visibility: hidden;       
+        position: fixed;
+        top: 230px;
+        right: 27px;
+        background-color: rgb(216, 232, 238); 
+        border: 1px solid #f1f1f1;
+        z-index: 9;
+        width: 300px;
        
+      
+      }
+      
+      @media (max-width: 991px) {
+        .main-panel {
+            margin-left: 0;
+            width: 100%;
+        }
+        }
+
+        .content-wrapper {
+        padding: 1.875rem 1.75rem;
+        width: 100%;
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        }
+      
     
-        letter-spacing: 2px;
-        font-size: medium;
-    }
-    .list2{
-        margin: 4px;
-        list-style-type: none;
-    }
-    .list2:hover{
-        background-color: darkgoldenrod;
-    }
-    
-    .ABC{
-    
-        font-size: small;
-        padding-right: 25px;
-        float: right;
-        padding-top: 10px;
-        font-weight: 700;
-    
-    
-    }
-    .total{
-        padding: 10px;
-        margin-left: -70px;
-    }
     </style>
-
-
-
-
-
-
-<div class="container-fluid "  style="border: 1px solid;">
+    <div class="main-panel">
+    <div class="content-wrapper">
     <div class="row">
-        <div class="col-sm-12 m-0 p-0 b1 " style="border-right: 1px solid;" >
-           
+    <div class="col-md-4" ></div>
+        <div class="col-md-4">
+        <h6  class="bg-info text-light p-2 m-0 text-left">Stock Group Creation</h6>
 
-            <div class="row ml-0" style="border-bottom: 1px solid; margin: 0px;">
-                <div class="col-sm-9 m-0 p-0 head" ><h4 class=" par" style="margin-top: 20px;margin-left: 40px; ">particulars</h4></div>
-                    <div class="col-sm-3 m-0 p-0 head" style="border-left: 1px solid; "><p class=" ABC" style="margin-top: 20px;"><center>ABC Limited </br>For 1-Apr-22 </center></p>
-                        
-                <div class="row" style="border-top: 1px solid; margin: 0px;">
-                    <div class="col-sm-9 m-0 p-0 " ><p class="ABC"><h6 style="margin-left: 100px;">Opening Balance</h6><br>Quantity rate value</p></div>
-                   
+            <form name="myForm" id="" action="{% url 'stock_groups' %}" method="post" class="p-5" onsubmit="return validateForm()" style="background-color:rgba(0,0,0,.4);">
+                {% csrf_token %}
+
+
+            <div class="row container-fluid  p-2 m-0">
+                <div class="col-md-4"> <label for="name">Name :</label></div>
+                <div class="col-md-8"><input   type="text" class=" form-control" id="a" 
+                 name="name" autocomplete="off" ></div>
                 
-                </div>
-                    </div>
+            </div>
+
+            
+            <div class="row container-fluid  p-2 m-0">
+                <div class="col-md-4 "> <label for="alia">(Alias) :</label></div>
+                <div class="col-md-8 "><input class="form-control" type="text" name="alias"
+                     id="alias" autocomplete="off"></div> 
+            </div>
+
+
+            <div class="row container-fluid  p-2 m-0">
+                <div class="col-md-4 "> <label for="Under">Under</label></div>
+                <div class="col-md-8 "> 
+                <select type="text" class="form-control" id="primary-text"  name="under_name" >
+                    <option>primary</option>
+                    {% for p in und %}
+                    <option value="{{p.name}}">{{p.name}}</option>
+                    {% endfor %}
                     
-
+                 </select>
+                </div>
+             
             </div>
 
-            <ul class="ul">
-                <div class="row list2" style="margin-top: 60px;">
-                <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="#">ysr</a></li></div>
-                <div class="col-sm-6 m-0 p-0 "><li class="list2" style="margin-left: 500px;">1300.00</li></div></div>
+            <div class="row container-fluid  p-2 m-0">
+                <div class="col-md-4 "> <label for="quantities">Should Quantities of items be added</label></div>
+                <div class="col-md-8 ">
+               <select   name="quantities" required="" class="form-control">
+                <option value="No">No</option> 
+                <option value="Yes">Yes</option>
+            </select></div>
+            </div>
 
 
-                <div class="row list2" >
-                    <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="#">Basic incom</a></li></div>
-                    <div class="col-sm-6 m-0 p-0 "><li class="list2"  style="margin-left: 500px;">4000.00</li></div></div>
-    
-
-               
-               
+            <div class="row" style="margin-top: 10%;">
+                <div class="col-md-4"></div>
+                    <div class="col-md-4" ><button class="btn btn-info w-15">CREATE</button></div>   
+                </div>
+        </form>
+        </div>
+        <div class="col-md-4"></div>
                 
-            </ul>
-
+    </div>
+    </div>
+    </div>
+                
            
+      
 
+    
+    
+    
+    <div class="form-popup" id="list-div" >
+  
+        <h6 style="background-color:rgb(17, 169, 240) ;color:white">List of Stock Groups</h6>
+    <hr >
+    <div>
+        <table >
+        <tr >
+            <td>
+              <a href="stock_group_secondary"><button
+                    type="submit"
+                    style="color: black;margin-left: 310%; width: 10%"
+                    class="custom-select-md form-control"
+                  >
+                    create
+                  </button></a>
+            </td>
+        </tr>
+    
+        <tr>
+          <td>    
+    
+            {% for l in und %}
+            <div onclick="hideList('{{l.name}}')" style="color: black;" >{{l.name}}</div>
+            {% endfor %}
+          </td>
+        </tr>  
+        
+        </table>
+    </div>
+    
+    
+     </div>
+    
+        <script>
+    
+                        
+                  function showList() {
+                      document.getElementById("list-div").style.visibility = "visible";
+                  }
+                  function hideList(valueDIv) {
+                      document.getElementById("primary-text").value=valueDIv;
+                      document.getElementById("list-div").style.visibility = "hidden";
+                  }
 
-          
-            
-        </div>
+                  function validateForm(){
 
-       
-
-       
-
-
-
-        <div class="col-sm-12 m-0 p-0  " style="border-right: 1px solid; border-top: 1px solid;" >
-           
-
-            <div class="row ml-2" style="margin-top: 15px;margin-bottom: 15px; font-size: 18px;">
-                <div class="col-sm-11 m-0 p-0 " ><a class="">Grand Total</a></div>
-                <div class="col-sm-1 m-0 p-0 " ><a class="total" >1000.00</a></div>
-                   
-            </div>
-
-            
-
-          
-            
-        </div>
-        {% endblock %} 
+                        var x=document.forms["myForm"]["name"].value;
+                        if (x==null || x=="")
+                        {
+                        alert("Name must be filled out");
+                        return false;
+                        }
+                    }
+                    </script>
+{% endblock %}
         
