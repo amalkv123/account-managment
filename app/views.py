@@ -83,15 +83,19 @@ def expensemonth(request,pk):
     return render(request,'expensemonth.html',{'p':data})
 
 def purchase(request):
-    return render(request, 'purchase.html')
+    data=Ledger.objects.all()
+    return render(request, 'purchase.html',{'p':data})
 
 def purchasemonth(request,pk):
-    return render(request, 'purchasemonth.html')
+    data=Ledger.objects.get(id=pk)
+    return render(request,'purchasemonth.html',{'p':data})
 
 def indirect(request):
-    return render(request, 'indirect.html')
+    data=Ledger.objects.all()
+    return render(request,'indirect.html',{'p':data})
 
 def indirectmonth(request,pk):
+    data=Ledger.objects.get(id=pk)
     return render(request, 'indirectmonth.html')
 
 def stockgroup(request):
@@ -254,11 +258,21 @@ def save_ledger(request):
         )
         sndry_mdl.save()
         messages.info(request,'LEDGER CREATED SUCCESSFULLY')
-        return redirect('ledger.html')
+        return redirect('ledger')
+
+
+
+
+
+
+
 
 
 
 #stock
+
+
+
 
 def stockgroup(request):
     std=CreateStockGrp.objects.all()
@@ -302,7 +316,7 @@ def stock_items(request):
                            manufacturing_date=manufacturing_date,expiry_dates=expiry_dates,
                            rate_of_duty=rate_of_duty,quantity=quantity,rate=rate,per=per,value=value,additional=additional)
         crt.save()
-        return redirect('stock_item')
+        return redirect('stockitem')
     return render(request,'stockitem.html',{'grp':grp})
 
 

@@ -75,19 +75,24 @@
             <ul class="ul">
                 <div class="row list2" >
                 <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="profitgroup">Opening Stock</a></li></div>
-                <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="profitgroup" style="margin-left: 200px;">60558.00</a></li></div></div>
+                <div class="col-sm-6 m-0 p-0"><li class="list2"  onchange=""><a href="profitgroup" style="margin-left: 200px;" id="opening">60558.00</a></li></div></div>
                 <div class="row list2" >
                 <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="purchase" >Purchase Account</a></li></div>
-                <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="purchase" style="margin-left: 200px;">12000.00</a></li></div></div>
+                <div class="col-sm-6 m-0 p-0"><li class="list2"  value=""><a href="purchase" style="margin-left: 200px;" id="purchase">12000.00</a></li></div></div>
                 <div class="row list2" >
                 <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="expence" > Direct Expense</a></li></div>
-                <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="expence" style="margin-left: 200px;">12000.00</a></li></div></div>
+                <div class="col-sm-6 m-0 p-0"><li  class="list2" ><a  href="expence" style="margin-left: 200px;" id="expense">12000.00</a></li></div></div>
                 
                 <div class="row list2" >
-                <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="#" >Gross profit</a></li></div>
-                <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="expence" style="margin-left: 200px;border-bottom: 1px solid ;padding-bottom: -20px;">12000.00</a></li></div></div>
-                <li class="list2 mt-5"><a href="indirect" >Indirect Expence</a></li>
-                <li class="list2"><a href="#" >Net profit</a></li>
+                <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="#" > </a></li></div>
+                <div class="col-sm-6 m-0 p-0"><li class="list2" ><a href="" id="dd" style="margin-left: 200px;border-bottom: 1px solid ;border-top: 1px solid; padding-bottom: -20px; "></a></li></div></div>
+                <div class="row list2 mt-5">
+                <div class="col-sm-6 m-0 p-0"><li class="list2 "><a href="#">Gross Loss b/f</a></li></div>
+                <div class="col-sm-6 m-0 p-0"><li class="list2 "><a href="#" id="asgard" style="margin-left: 200px;"></a></li></div></div>
+                <div class="row list2 ">
+                <div class="col-sm-6 m-0 p-0"><li class="list2 "><a href="indirect" >Indirect Expence</a></li></div>
+                <div class="col-sm-6 m-0 p-0"><li class="list2 "><a href="indirect" id="indirect" style="margin-left: 200px;">5000</a></li></div></div>
+                
                
                 
             </ul>
@@ -117,6 +122,7 @@
 
             <div class="row ml-0" >
                 <div class="col-sm-6 m-0 p-0 " ><a class="total">Total</a></div>
+                <div class="col-sm-6 m-0 p-0 " ><a class="total" style="margin-left: 200px;" id="total"></a></div>
                    
             </div>
 
@@ -151,6 +157,37 @@
 
     </div>
 </div>
+<script>
+
+
+setTimeout(function ad(){ 
+    var a=document.getElementById('opening').innerHTML
+    var b=document.getElementById('purchase').innerHTML
+    var c=document.getElementById('expense').innerHTML
+    var d1 = parseInt(a);
+    var d2 = parseInt(b);
+    var d3 = parseInt(c);
+    var d=d1+d2+d3;
+    
+    document.getElementById("dd").innerHTML = d+".00";
+    var ab = d-d1;
+    document.getElementById("asgard").innerHTML = ab+".00";
+    var f=document.getElementById('indirect').innerHTML
+    var ab2 = ab-f;
+    document.getElementById("total").innerHTML = ab2+".00";
+ }, 2000);
+
+
+
+
+     $('#opening,#purchase,#expense').keyup(function(){
+            var a =$('#opening').html();
+            var b = $('#purchase').html();
+            var c = $('#expense').html();
+
+        $('#dd').html(a + b + c); 
+        });
+</script>
 
 
 

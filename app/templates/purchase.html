@@ -86,8 +86,8 @@
                 {% for p2 in p %}
                 
                 <div class="row list2" >
-                <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="{% url 'expensemonth' p2.id %}">{{p2.name}}</a></li></div>
-                <div class="col-sm-6 m-0 p-0 "><li class="list2" style="margin-left: 500px;">{{p2.opening_balance}}.00</li></div></div>
+                <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="{% url 'purchasemonth' p2.id %}">{{p2.ledger_name}}</a></li></div>
+                <div class="col-sm-6 m-0 p-0 "><li class="list2" style="margin-left: 500px;">{{p2.ledger_opening_bal}}.00</li></div></div>
                
                 {% endfor %}
 
