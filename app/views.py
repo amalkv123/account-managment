@@ -72,7 +72,8 @@ def profit(request):
     return render(request, 'profit.html')
 
 def profitgroup(request):
-    return render(request, 'profitgroup.html')
+    std=CreateStockGrp.objects.all()
+    return render(request, 'profitgroup.html',{'p':std})
 
 def expence(request):
     data=create_payhead.objects.all()
@@ -97,9 +98,6 @@ def indirect(request):
 def indirectmonth(request,pk):
     data=Ledger.objects.get(id=pk)
     return render(request, 'indirectmonth.html')
-
-def stockgroup(request):
-    return render(request, 'stockgroup.html')
 
 
 
