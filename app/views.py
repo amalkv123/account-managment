@@ -75,29 +75,81 @@ def profitgroup(request):
     std=CreateStockGrp.objects.all()
     return render(request, 'profitgroup.html',{'p':std})
 
+def item_list(request):
+    std=stock_item_crt.objects.filter()
+    return render(request, 'item_list.html',{'p':std})
+
 def expence(request):
-    data=create_payhead.objects.all()
-    return render(request, 'expence.html',{'p':data})
+    std=create_payhead.objects.filter(under='Income(Indirect)')
+    stm=Ledger.objects.filter(group_under='Expences_direct')
+    balance=create_payhead.objects.all()
+    balance_le=Ledger.objects.all()
+    total=0
+    total_d=0
+    for i in balance:
+        if(i.under=='Income(Indirect)'):
+            total+=int(i.opening_balance)
+    for p in balance_le:
+         if((p.group_under=='Expences_direct') &(p.ledger_cr_db=='Cr')):
+             total+=int(p.ledger_opening_bal) 
+         elif((p.group_under=='Expences_direct') &(p.ledger_cr_db=='Dr')):
+             total_d+=int(p.ledger_opening_bal) 
+    return render(request,'expence.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
+
 
 def expensemonth(request,pk):
     data=create_payhead.objects.get(id=pk)
     return render(request,'expensemonth.html',{'p':data})
 
+def expensemonth2(request,pk):
+    data=Ledger.objects.get(id=pk)
+    return render(request, 'indirectmonth2.html',{'p':data})
+
 def purchase(request):
-    data=Ledger.objects.all()
-    return render(request, 'purchase.html',{'p':data})
+    std=create_payhead.objects.filter(under='Income(Indirect)')
+    stm=Ledger.objects.filter(group_under='Expences_Indirect')
+    balance=create_payhead.objects.all()
+    balance_le=Ledger.objects.all()
+    total=0
+    total_d=0
+    for i in balance:
+        if(i.under=='Income(Indirect)'):
+            total+=int(i.opening_balance)
+    for p in balance_le:
+         if((p.group_under=='Expences_Indirect') &(p.ledger_cr_db=='Cr')):
+             total+=int(p.ledger_opening_bal) 
+         elif((p.group_under=='Expences_Indirect') &(p.ledger_cr_db=='Dr')):
+             total_d+=int(p.ledger_opening_bal) 
+    return render(request,'purchase.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
 
 def purchasemonth(request,pk):
     data=Ledger.objects.get(id=pk)
     return render(request,'purchasemonth.html',{'p':data})
 
 def indirect(request):
-    data=Ledger.objects.all()
-    return render(request,'indirect.html',{'p':data})
+    std=create_payhead.objects.filter(under='Income(Indirect)')
+    stm=Ledger.objects.filter(group_under='Expences_Indirect')
+    balance=create_payhead.objects.all()
+    balance_le=Ledger.objects.all()
+    total=0
+    total_d=0
+    for i in balance:
+        if(i.under=='Income(Indirect)'):
+            total+=int(i.opening_balance)
+    for p in balance_le:
+         if((p.group_under=='Expences_Indirect') &(p.ledger_cr_db=='Cr')):
+             total+=int(p.ledger_opening_bal) 
+         elif((p.group_under=='Expences_Indirect') &(p.ledger_cr_db=='Dr')):
+             total_d+=int(p.ledger_opening_bal) 
+    return render(request,'indirect.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
 
 def indirectmonth(request,pk):
     data=Ledger.objects.get(id=pk)
-    return render(request, 'indirectmonth.html')
+    return render(request, 'indirectmonth.html',{'p':data})
+
+def indirectmonth2(request,pk):
+    data=Ledger.objects.get(id=pk)
+    return render(request, 'indirectmonth2.html',{'p':data})
 
 
 
@@ -116,6 +168,7 @@ def save_ledger(request):
         Lalias = request.POST.get('ledger_alias', False)
         Lunder = request.POST.get('group_under', False)
         Lopening_bal = request.POST.get('ledger_opening_bal', False)
+        cd_db=request.POST.get('cd_db',False)
         typ_of_ledg = request.POST.get('ledger_type', False)
         provide_banking = request.POST.get('provide_banking_details', False)
 
@@ -176,6 +229,7 @@ def save_ledger(request):
             ledger_name=Lname,
             ledger_alias=Lalias,
             group_under=Lunder,
+            ledger_cr_db=cd_db,
             ledger_opening_bal=Lopening_bal,
             ledger_type=typ_of_ledg,
             provide_banking_details=provide_banking,

@@ -86,11 +86,28 @@ class stock_item_crt(models.Model):
     
     
 class CreateStockGrp(models.Model):
-    item = models.ForeignKey(stock_item_crt, on_delete=models.CASCADE, null=True, blank=True)
     name=models.CharField(max_length=100)
     alias=models.CharField(max_length=100)
     under_name=models.CharField(max_length=50)
     quantities=models.CharField(max_length=50)
+
+
+class group_summary(models.Model):
+    CreateStockGrp=models.ForeignKey(CreateStockGrp, on_delete=models.CASCADE)
+    name=models.CharField(max_length=100,null=True)
+    alias=models.CharField(max_length=100,null=True)
+    under=models.CharField(max_length=100,null=True)
+    category=models.CharField(max_length=100,null=True)
+    units=models.CharField(max_length=100,null=True)
+    batches=models.CharField(max_length=100,null=True)
+    manufacturing_date=models.CharField(max_length=100,null=True)
+    expiry_dates=models.CharField(max_length=100,null=True)
+    rate_of_duty=models.CharField(max_length=100,null=True)
+    quantity=models.CharField(max_length=100,null=True)
+    rate=models.CharField(max_length=100,null=True)
+    per=models.CharField(max_length=100,null=True)
+    value=models.CharField(max_length=100,null=True)
+    additional=models.CharField(max_length=100,null=True)
 
 
 
@@ -99,6 +116,7 @@ class Ledger(models.Model):
     ledger_alias = models.CharField(max_length=225,default="Null",blank=True)
     group_under =  models.CharField(max_length=225,default="Null",blank=True)
     ledger_opening_bal = models.CharField(max_length=225,default="Null",blank=True)
+    ledger_cr_db=models.CharField(max_length=225,default="Null",blank=True)
     ledger_type = models.CharField(max_length=225,default="Null",blank=True)
     provide_banking_details =  models.CharField(max_length=225,default="Null",blank=True)
 
@@ -165,3 +183,4 @@ class Ledger_sundry(models.Model):
     Default_credit_period=models.CharField(max_length=225,default="Null",blank=True)
     Check_for_credit_days=models.CharField(max_length=225,default="Null",blank=True)
     
+

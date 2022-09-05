@@ -64,15 +64,22 @@
            
 
             <div class="row ml-0" style="border-bottom: 1px solid; margin: 0px;">
-                <div class="col-sm-9 m-0 p-0 head" ><h4 class=" par" style="margin-top: 20px;margin-left: 40px; ">particulars</h4></div>
-                    <div class="col-sm-3 m-0 p-0 head" style="border-left: 1px solid; "><p class=" ABC" style="margin-top: 20px;"><center><h6 style="margin-bottom: -20px;margin-top: 10px; ">Opening Stoke</h4><br>ABC Limited <br>For 1-Apr-22 </center></p>
+                <div class="col-sm-7 m-0 p-0 head" ><h4 class=" par" style="margin-top: 20px;margin-left: 40px; ">particulars</h4></div>
+                    <div class="col-sm-5 m-0 p-0 head" style="border-left: 1px solid; "><p class=" ABC" style="margin-top: 20px;"><center><h6 style="margin-bottom: -20px;margin-top: 10px; ">Purchase Accounts</h4><br>ABC Limited <br>For 1-Apr-22 </center></p>
                         
-                <div class="row" style="border-top: 1px solid; margin: 0px;">
-                    <div class="col-sm-9 m-0 p-0 " ><p class="ABC"><h6 style="margin-left: 100px;">Opening Balance</h6></p></div></div>
-                    <div class="row" >
-                        <div class="col-sm-4 m-0 p-0 " style="margin-bottom: -30px;"><p class="ABC"><h6 style="margin-left: 50px;">Debit</h6></p></div>
-                        <div class="col-sm-4 m-0 p-0 "><p class="ABC"><h6 style="margin-left: 50px;">Credit</h6></p></div>
-                        <div class="col-sm-4 m-0 p-0 " ><p class="ABC"><h6 style="margin-left: 50px;">Debit</h6></p></div>
+                    <div class="row" style="border-top: 1px solid; margin: 0px;">
+                        <div class="col-sm-6 m-0 p-0 " ><p class="ABC"><h6 style="margin-left: 70px;margin-top: 10px;">Opening Balance<br></h6></p>
+                        <div class="row" style="margin-top: -30px;">
+                            <div class="col-sm-4 m-0 p-0 " style="margin-bottom: -30px;"><p class="ABC"><h6 style="margin-left: 30px;">Quantity</h6></p></div>
+                            <div class="col-sm-4 m-0 p-0 "><p class="ABC"><h6 style="margin-left: 50px;">Rate</h6></p></div>
+                            <div class="col-sm-4 m-0 p-0 " ><p class="ABC"><h6 style="margin-left: 50px;">Value</h6></p></div>
+                        </div></div>
+                        <div class="col-sm-6 m-0 p-0 " style="border-left: 1px solid;margin: 50px;"><p class="ABC"><h6 style="margin-left: 70px;margin-top: 10px;">Closing Balance</h6></p>
+                            <div class="row" style="margin-top: -30px;">
+                                <div class="col-sm-4 m-0 p-0 " style="margin-bottom: -30px;"><p class="ABC"><h6 style="margin-left: 30px;">Quantity</h6></p></div>
+                                <div class="col-sm-4 m-0 p-0 "><p class="ABC"><h6 style="margin-left: 50px;">Rate</h6></p></div>
+                                <div class="col-sm-4 m-0 p-0 " ><p class="ABC"><h6 style="margin-left: 50px;">Value</h6></p></div>
+                            </div></div>
                     </div>
                         
                     
@@ -88,7 +95,7 @@
                 {% for p2 in p %}
                 
                 <div class="row list2" >
-                <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="{% url 'item_list'%}">{{p2.name}}</a></li></div>
+                <div class="col-sm-6 m-0 p-0" ><li class="list2"><a href="{% url 'purchasemonth' p2.id %}">{{p2.ledger_name}}</a></li></div>
                 <div class="col-sm-6 m-0 p-0 "><li class="list2" style="margin-left: 500px;">{{p2.ledger_opening_bal}}.00</li></div></div>
                
                 {% endfor %}
@@ -137,4 +144,3 @@
 //Output: 21
         </script>
         {% endblock %} 
-       
