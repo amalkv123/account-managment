@@ -92,11 +92,11 @@
                 
                 <div class="row list2" >
                 <div class="col-sm-6 m-0 p-0" style="margin-top: -10px;"><li class="list2"><a href="#">Opening balance</a></li></div>
-                <div class="col-sm-6 m-0 p-0 "><li class="list2" style="margin-left: 500px;">{{p.opening_balance}}.00 Dr</li></div></div>
+                <div class="col-sm-6 m-0 p-0 "><li class="list2" style="margin-left: 500px;">{{p.ledger_opening_bal}}.00 Dr</li></div></div>
                
                 <div class="row list2">
-                    <div class="col-sm-6 m-0 p-0" ><li class="list2" style="margin-top: -2px;"><a href="expensemonth2">April</a></li></div>
-                    <div class="col-sm-6 m-0 p-0 "><li class="list2" style="margin-left: 500px;margin-top: -2px;">{{p.opening_balance}}.00 Dr</li></div></div>
+                    <div class="col-sm-6 m-0 p-0" ><li class="list2" style="margin-top: -2px;"><a href="{% url 'indirectmonth2' p.id %}">April</a></li></div>
+                    <div class="col-sm-6 m-0 p-0 "><li class="list2" style="margin-left: 500px;margin-top: -2px;">{{p.ledger_opening_bal}}.00 Dr</li></div></div>
                    
                     <div class="row list2">
                         <div class="col-sm-6 m-0 p-0"><li class="list2" style="margin-top: -2px;"><a href="#">May</a></li></div></div>
@@ -145,7 +145,7 @@
 
             <div class="row ml-2" style="margin-top: 15px;margin-bottom: 15px; font-size: 18px;">
                 <div class="col-sm-11 m-0 p-0 " ><a style="margin-left: 30px;">Grand Total</a></div>
-                <div class="col-sm-1 m-0 p-0 " ><a class="total" >1000.00</a></div>
+                <div class="col-sm-1 m-0 p-0 " ><a class="total" >{{p.ledger_opening_bal}}.00 Dr</a></div>
                    
             </div>
 

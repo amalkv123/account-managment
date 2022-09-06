@@ -19,6 +19,7 @@ urlpatterns = [
     path('expensemonth2/<int:pk>',views.expensemonth2,name='expensemonth2'),
     path('purchase',views.purchase,name='purchase'),
     path('purchasemonth/<int:pk>',views.purchasemonth,name='purchasemonth'),
+    path('purchasemonth2/<int:pk>',views.purchasemonth2,name='purchasemonth2'),
     path('indirect',views.indirect,name='indirect'),
     path('indirectmonth/<int:pk>',views.indirectmonth,name='indirectmonth'),
     path('indirectmonth2/<int:pk>',views.indirectmonth2,name='indirectmonth2'),

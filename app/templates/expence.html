@@ -97,9 +97,9 @@
                 {% for t in stm %}
                
                  {% if t.ledger_cr_db == "Cr" %}
-                 <li class="list2"><a href="{% url 'indirectmonth' t.id %}">{{t.ledger_name}}<i class="open" style="margin-left: 300px;">{{t.ledger_opening_bal}}.00</i></a></li>
+                 <li class="list2"><a href="{% url 'expensemonth' t.id %}">{{t.ledger_name}}<i class="open" style="margin-left: 300px;">{{t.ledger_opening_bal}}.00</i></a></li>
                   {% else %}
-                <li class="list2"><a href="{% url 'indirectmonth' t.id %}">{{t.ledger_name}}<i class="open2">{{t.ledger_opening_bal}}.00</i></a></li>
+                <li class="list2"><a href="{% url 'expensemonth' t.id %}">{{t.ledger_name}}<i class="open2">{{t.ledger_opening_bal}}.00</i></a></li>
                   {% endif %}
 
                 {% endfor  %}
