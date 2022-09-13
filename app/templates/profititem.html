@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<style>
+  
+.table_row:hover{
+  background-color: darkgoldenrod;
+}
+
+
+
+
+.ABC{
+    text-align: right;
+    display: flex;
+    flex: 1;
+   margin-left: 150px;
+
+}
+.head{
+    text-align: center;
+}
+.total1{
+  text-align: right;
+  margin-left: 400px;
+}
+</style>
+
+
+<div class="container-fluid "style=" border: 1px solid rgba(128, 128, 128, 0.6);background-color:rgba(0,0,0,.4);" >
+    
+    <div class="row">
+        <div class="col-sm-12 m-0 p-0 b1 " style=" " >
+           
+
+            <div class="row m-0" style="border-bottom: 1px solid rgba(128, 128, 128, 0.6)">
+                <div class="col-sm-3 m-0 p-0 "style="border-right: 1px solid rgba(128, 128, 128, 0.6)" ><h5 class=" par">particulars</h6></div>
+                    <div class="col-sm-3 m-0 pl-5 " ><h5 class=" par">Closing Balance</h6></div>
+                    <div class="col-sm-3 m-0 p-0 head"><p class=" ABC">ABC Limited </br>For 1-Apr-22</br></p></div>
+            </div>
+
+
+            <table class="table " style="border: 1px solid rgba(128, 128, 128, 0.6)">
+                <thead>
+                  <tr class="col ">
+                    <th scope="col"></th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Rate</th>
+                    <th scope="col">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for p in std %}
+                  <tr>
+                    <td class="table_row"><a class="m-3" href="{% url 'stock_month' p.id %}">{{p.name}}</a></td>
+                    <td  class="table_row">{{p.quantity}} </td>
+                    <td  class="table_row">{{p.rate}}</td>
+                    <td  class="table_row">{{p.value}}</td>
+                  </tr>
+                {% endfor %}
+                  
+                </tbody>
+              </table>
+
+        </div>
+
+      
+
+        <div class="col-sm-12 m-0 p-0  "style="border-top: 1px solid rgba(128, 128, 128, 0.6)"  >
+           
+
+            <div class="row m-0" >
+                <div class="col-sm-6 m-0 p-0 " ><a class="total">Grand Total</a></div>
+                <div class="col-sm-6 m-0 p-0 " ><a class="total1">{{total}}.00</a></div>
+                   
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+
+
+{% endblock %

@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 import os
-from app.models import crtcompony,create_payhead,compute_information,Rounding,gratuity,CreateStockGrp,stock_item_crt,Ledger,Ledger_Banking_Details,Ledger_Mailing_Address,Ledger_Tax_Register,Ledger_Satutory,Ledger_Rounding,ledger_tax,Ledger_sundry
+from app.models import crtcompony,create_payhead,compute_information,Rounding,gratuity,CreateStockGrp,stock_item_crt,Ledger,Ledger_Banking_Details,Ledger_Mailing_Address,Ledger_Tax_Register,Ledger_Satutory,Ledger_Rounding,ledger_tax,Ledger_sundry,group_summary,voucher2
 from django.contrib.auth.models import auth,User
 from django.contrib import messages
 
@@ -69,19 +69,87 @@ def selectcompony(request):
 
 
 def profit(request):
-    return render(request, 'profit.html')
+    balance=Ledger.objects.all()
+    balance_py=create_payhead.objects.all()
+    balance_le=Ledger.objects.all()
+    balance_group=group_summary.objects.all()
+    total_grp=0
+    total_direct=0
+    total=0
+    total_income=0
+    total_purch=0
+    total_direct_exp=0
+    total_indirect=0
+    for i in balance:
+        if(i.group_under=='Sales_Account'):
+            total+=int(i.ledger_opening_bal)
+            
+    for i in balance_py:
+        if(i.under=='Income(Indirect)'):
+            total_income+=int(i.opening_balance)
+    for p in balance_le:
+         if(p.group_under=='income_Indirect'):
+             total_income+=int(p.ledger_opening_bal) 
+             
+    for i in balance_py:
+        if(i.under=='Direct Incomes'):
+            total_direct+=int(i.opening_balance)    
+    
+    for p in balance_le:
+        if(p.group_under=='Direct Incomes'):
+            total_direct+=int(p.ledger_opening_bal) 
+
+    for k in  balance_group:
+        total_grp+=int(k.value)
+    
+    
+        
+    #second particular 
+    
+    for i in balance:
+        if(i.group_under=='Purchase_Account'):
+            total_purch+=int(i.ledger_opening_bal)
+    
+    # indirect expenses total
+           
+    for i in balance_py:
+        if(i.under=='Direct Expenses'):
+            total_direct_exp+=int(i.opening_balance)    
+    
+    for p in balance_le:
+        if(p.group_under=='Direct Expenses'):
+            total_direct_exp+=int(p.ledger_opening_bal) 
+            
+    #indirect expenses total   
+    
+    for i in balance_py:
+        if(i.under=='Indirect Expenses'):
+            total_indirect+=int(i.opening_balance)
+    for p in balance_le:
+         if(p.group_under=='Expences_Indirect'):
+            total_indirect+=int(p.ledger_opening_bal)    
+            
+                   
+    return render(request,'profit.html',{'total':total,'total_income':total_income,'total_direct':total_direct,'total_grp':total_grp,'total_purch':total_purch,'total_direct_exp':total_direct_exp,'total_indirect':total_indirect}) 
+
 
 def profitgroup(request):
     std=CreateStockGrp.objects.all()
-    return render(request, 'profitgroup.html',{'p':std})
+    balance_group=group_summary.objects.all()
+    
+    total_grp=0
+    
+    for i in  balance_group:
+        total_grp+=int(i.value)
+   
+    
+    return render(request, 'profitgroup.html',{'p':std,'total_grp':total_grp})
 
-def item_list(request):
-    std=stock_item_crt.objects.filter()
-    return render(request, 'item_list.html',{'p':std})
+
 
 def expence(request):
     std=create_payhead.objects.filter(under='Income(Indirect)')
-    stm=Ledger.objects.filter(group_under='Expences_direct')
+    stm=Ledger.objects.filter(group_under='Direct Expenses')
     balance=create_payhead.objects.all()
     balance_le=Ledger.objects.all()
     total=0
@@ -90,16 +158,16 @@ def expence(request):
         if(i.under=='Income(Indirect)'):
             total+=int(i.opening_balance)
     for p in balance_le:
-         if((p.group_under=='Expences_direct') &(p.ledger_cr_db=='Cr')):
+         if((p.group_under=='Direct Expenses') &(p.ledger_cr_db=='Cr')):
              total+=int(p.ledger_opening_bal) 
-         elif((p.group_under=='Expences_direct') &(p.ledger_cr_db=='Dr')):
+         elif((p.group_under=='Direct Expenses') &(p.ledger_cr_db=='Dr')):
              total_d+=int(p.ledger_opening_bal) 
     return render(request,'expence.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
 
 
 def expensemonth(request,pk):
     data=Ledger.objects.get(id=pk)
-    return render(request,'expensemonth.html',{'p':data})
+    return render(request,'expensemonth.html',{'p':data})#Expences_direct Direct Expenses
 
 def expensemonth2(request,pk):
     data=Ledger.objects.get(id=pk)
@@ -107,7 +175,7 @@ def expensemonth2(request,pk):
 
 def purchase(request):
     std=create_payhead.objects.filter(under='Income(Indirect)')
-    stm=Ledger.objects.filter(group_under='Expences_Indirect')
+    stm=Ledger.objects.filter(group_under='Purchase_Account')
     balance=create_payhead.objects.all()
     balance_le=Ledger.objects.all()
     total=0
@@ -116,9 +184,9 @@ def purchase(request):
         if(i.under=='Income(Indirect)'):
             total+=int(i.opening_balance)
     for p in balance_le:
-         if((p.group_under=='Expences_Indirect') &(p.ledger_cr_db=='Cr')):
+         if((p.group_under=='Purchase_Account') &(p.ledger_cr_db=='Cr')):
              total+=int(p.ledger_opening_bal) 
-         elif((p.group_under=='Expences_Indirect') &(p.ledger_cr_db=='Dr')):
+         elif((p.group_under=='Purchase_Account') &(p.ledger_cr_db=='Dr')):
              total_d+=int(p.ledger_opening_bal) 
     return render(request,'purchase.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
 
@@ -132,7 +200,7 @@ def purchasemonth2(request,pk):
 
 def indirect(request):
     std=create_payhead.objects.filter(under='Income(Indirect)')
-    stm=Ledger.objects.filter(group_under='Purchase_Account')
+    stm=Ledger.objects.filter(group_under='Expences_Indirect')
     balance=create_payhead.objects.all()
     balance_le=Ledger.objects.all()
     total=0
@@ -153,7 +221,14 @@ def indirectmonth(request,pk):
 
 def indirectmonth2(request,pk):
     data=Ledger.objects.get(id=pk)
-    return render(request, 'indirectmonth2.html',{'p':data})
+    data2=voucher2.objects.all()
+    
+    totalc=0
+    totald=0
+    for i in data2:
+        totalc+=int(i.Credit2)
+        
+    return render(request,'indirectmonth2.html',{'p':data,'data2':data2,'totalc':totalc})
 
 
 
@@ -327,13 +402,9 @@ def save_ledger(request):
 
 #stock
 
-
-
-
-def stockgroup(request):
-    std=CreateStockGrp.objects.all()
-    return render(request,'stockgroup.html',{'std':std})
-
+def simon(request):
+    std=CreateStockGrp.objects.all()  
+    return render(request,'stockgroup2.html',{'std':std,})
 
 def stock_groups(request):
     und=CreateStockGrp.objects.all()
@@ -360,6 +431,7 @@ def stock_items(request):
         # category=request.POST['category',FALSE]
         units=request.POST['units']
         batches=request.POST['batches']
+        grp1=CreateStockGrp.objects.get(id=under)
         manufacturing_date=request.POST['manufacturing_date']
         expiry_dates=request.POST['expiry_dates']
         rate_of_duty=request.POST['rate_of_duty']
@@ -368,9 +440,9 @@ def stock_items(request):
         per=request.POST['per']
         value=request.POST['value']
         additional=request.POST['additional']
-        crt=stock_item_crt(name=name,alias=alias,under=under,units=units,batches=batches,
+        crt=group_summary(name=name,alias=alias,under=under,units=units,batches=batches,
                            manufacturing_date=manufacturing_date,expiry_dates=expiry_dates,
-                           rate_of_duty=rate_of_duty,quantity=quantity,rate=rate,per=per,value=value,additional=additional)
+                           rate_of_duty=rate_of_duty,quantity=quantity,rate=rate,per=per,value=value,additional=additional,CreateStockGrp=grp1)
         crt.save()
         return redirect('stockitem')
     return render(request,'stockitem.html',{'grp':grp})
@@ -561,6 +633,54 @@ def grp_month(request,pk):
     std=Ledger.objects.get(id=pk)
     return render(request,'group_month.html',{'std':std})
 
+
+
+
+def  payhead_list(request):
+    std=create_payhead.objects.filter(under='Direct Incomes')
+    stm=Ledger.objects.filter(group_under='Direct Incomes')
+    balance=create_payhead.objects.all()
+    balance_le=Ledger.objects.all()
+    total=0
+    total_d=0
+    for i in balance:
+        if(i.under=='Direct Incomes'):
+            total+=int(i.opening_balance)
+    for p in balance_le:
+         if((p.group_under=='Direct Incomes') &(p.ledger_cr_db=='Cr')):
+             total+=int(p.ledger_opening_bal) 
+         elif((p.group_under=='Direct Incomes') &(p.ledger_cr_db=='Dr')):
+             total_d+=int(p.ledger_opening_bal) 
+    
+    
+    return render(request,'payhead_items.html',{'std':std,'stm':stm,'total':total,'total_d':total_d}) 
+
+
+
+
+def stockgroup(request):
+    std=CreateStockGrp.objects.all()  
+    return render(request,'stockgroup.html',{'std':std,})
+
+
+
+def item_list(request,pk):
+    std=group_summary.objects.filter(CreateStockGrp=pk)
+    # balance=group_summary.objects.all()
+    total=0
+    for i in std:
+        total+=int(i.value)
+    return render(request,'items.html',{'std':std,'total':total})  
+
+
+def stock_month(request,pk):
+    std=group_summary.objects.get(id=pk)
+    return render(request,'stock_month.html',{'p':std})
+
+
+def stock_month2(request,pk):
+    std=group_summary.objects.get(id=pk)
+    return render(request,'stockmonth2.html',{'p':std})
 
 
 

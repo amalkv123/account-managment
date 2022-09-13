@@ -227,10 +227,9 @@
     <table >
     <tr >
         <td>
-          <a href="{% url 'stock_groups' %}"><button
+          <a href="{% url 'simon' %}"><button
                 type="submit"
-                style="color: black;margin-left: 310%; width: 60px;
-                class="custom-select-md form-control">
+                style="color: black;margin-left: 310%; width: 60px; "class="custom-select-md form-control">
               
                 create
               </button></a>
@@ -240,8 +239,8 @@
     <tr>
       <td>    
 
-        {% for l in grp %}
-        <div onclick="hideGroup('{{l.name}}')" style="color: black; margin-left: 20px; font-size: 18px;" >{{l.name}}</div>
+        {% for l in std %}
+        <div onclick="hideGroup('{{l.id}}')" style="color: black; margin-left: 20px; font-size: 18px;" >{{l.name}}</div>
         {% endfor %}
       </td>
     </tr>  

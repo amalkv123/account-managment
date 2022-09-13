@@ -29,7 +29,15 @@ urlpatterns = [
     path('stock_items',views.stock_items,name='stock_items'),
     path('ledger',views.ledger,name='ledger'),
     path('save_ledger',views.save_ledger,name='save_ledger'),
-    path('item_list',views.item_list,name='item_list'),
+    path('item_list/<int:pk>',views.item_list,name='item_list'),
+    path('sales',views.sales,name='sales'),
+    path('simon',views.simon,name='simon'),
+    path('sales_month/<int:pk>',views.sales_month,name='sales_month'),
+    path('grp_month/<int:pk>',views.grp_month,name='grp_month'),
+    path('payhead_list',views.payhead_list,name='payhead_list'),
+    path('stock_month/<int:pk>',views.stock_month,name='stock_month'),
+    path('stock_month2/<int:pk>',views.stock_month2,name='stock_month2'),
+    
     
    
 

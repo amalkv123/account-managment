@@ -182,5 +182,21 @@ class Ledger_sundry(models.Model):
     maintain_balance_bill_by_bill =models.CharField(max_length=225,default="Null",blank=True)
     Default_credit_period=models.CharField(max_length=225,default="Null",blank=True)
     Check_for_credit_days=models.CharField(max_length=225,default="Null",blank=True)
+
+
+
     
+
+class voucher2(models.Model):
+    Date2 = models.CharField(max_length=225,default="Null",blank=True)
+    Particulars2 = models.CharField(max_length=225,default="Null",blank=True)
+    VchType2 =  models.CharField(max_length=225,default="Null",blank=True)
+    VchNo2 = models.CharField(max_length=225,default="Null",blank=True)
+    Debit2=models.CharField(max_length=225,default="Null",blank=True)
+    Credit2 = models.CharField(max_length=225,default="Null",blank=True)
+   
+    def __str__(self):
+        return self.Particulars2
+
+
 
