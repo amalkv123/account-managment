@@ -1,158 +1,244 @@
 {% extends 'base.html' %}
-    {% block body %}
-    {% load static %}
+
+
+{% block body %}
+<head>
     <style>
-        
-
-        .form-popup {
-        visibility: hidden;       
-        position: fixed;
-        top: 230px;
-        right: 27px;
-        background-color: rgb(216, 232, 238); 
-        border: 1px solid #f1f1f1;
-        z-index: 9;
-        width: 300px;
-       
-      
-      }
-      
-      @media (max-width: 991px) {
-        .main-panel {
-            margin-left: 0;
-            width: 100%;
-        }
-        }
-
-        .content-wrapper {
-        padding: 1.875rem 1.75rem;
-        width: 100%;
-        -webkit-flex-grow: 1;
-        flex-grow: 1;
-        }
-      
-    
-    </style>
-    <div class="main-panel">
-    <div class="content-wrapper">
-    <div class="row">
-    <div class="col-md-2" ></div>
-        <div class="col-md-8">
-        <h6  class="bg-info text-light p-2 m-0 text-left">Stock Group Creation</h6>
-
-            <form name="myForm" id="" action="{% url 'stock_groups' %}" method="post" class="p-5" onsubmit="return validateForm()" style="background-color:rgba(0,0,0,.4);">
-                {% csrf_token %}
-
-
-            <div class="row container-fluid  p-2 m-0">
-                <div class="col-md-4"> <label for="name">Name :</label></div>
-                <div class="col-md-8"><input   type="text" class=" form-control" id="a" 
-                 name="name" autocomplete="off" ></div>
-                
-            </div>
-
-            
-            <div class="row container-fluid  p-2 m-0">
-                <div class="col-md-4 "> <label for="alia">(Alias) :</label></div>
-                <div class="col-md-8 "><input class="form-control" type="text" name="alias"
-                     id="alias" autocomplete="off"></div> 
-            </div>
-
-
-            <div class="row container-fluid  p-2 m-0">
-                <div class="col-md-4 "> <label for="Under">Under</label></div>
-                <div class="col-md-8 "> 
-                <select type="text" class="form-control" id="primary-text"  name="under_name" >
-                    <option>primary</option>
-                    {% for p in std %}
-                    <option value="{{p.name}}">{{p.name}}</option>
-                    {% endfor %}
-                    
-                 </select>
-                </div>
-             
-            </div>
-
-            <div class="row container-fluid  p-2 m-0">
-                <div class="col-md-4 "> <label for="quantities">Should Quantities of items be added</label></div>
-                <div class="col-md-8 ">
-               <select   name="quantities" required="" class="form-control">
-                <option value="No">No</option> 
-                <option value="Yes">Yes</option>
-            </select></div>
-            </div>
-
-
-            <div class="row" style="margin-top: 10%;">
-                <div class="col-md-4"></div>
-                    <div class="col-md-4" ><button class="btn btn-info w-15">CREATE</button></div>   
-                </div>
-        </form>
-        </div>
-        <div class="col-md-4"></div>
-                
-    </div>
-    </div>
-    </div>
-                
-           
-      
-
+          thead th {
+    border: .5px solid rgba(255, 255, 255, .2); ;
     
     
-    
-    <div class="form-popup" id="list-div" >
+ }
+ .table-row{
+cursor:pointer;
+}
+.table-row:hover{
+    background-color: rgb(216, 155, 51);
+}
+.table-row1{
+cursor:pointer;
+}
+.table-row1:hover{
+    background-color: rgb(216, 155, 51);
+}    
   
-        <h6 style="background-color:rgb(17, 169, 240) ;color:white">List of Stock Groups</h6>
-    <hr >
-    <div>
-        <table >
-        <tr >
-            <td>
-              <a href="stock_group_secondary"><button
-                    type="submit"
-                    style="color: black;margin-left: 310%; width: 10%"
-                    class="custom-select-md form-control"
-                  >
-                    create
-                  </button></a>
-            </td>
-        </tr>
-    
-        <tr>
-          <td>    
-    
-            {% for l in und %}
-            <div onclick="hideList('{{l.name}}')" style="color: black;" >{{l.name}}</div>
-            {% endfor %}
-          </td>
-        </tr>  
-        
-        </table>
+
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="row d-flex " style="background-color: rgb(103, 175, 220);color:#fff;width:100%;margin: auto;">
+                    <div class="col "> Ledger Vouchers</div>
+                </div>
+                <div class="row  " style="height: 50px;">
+                    <div class="col ">
+                        <h6>
+                        <span class=" d-flex justify-content-start" style="margin-top: 8px;"> Ledger : &nbsp;<strong>{{p.name}} </strong> </span>
+                        <span class="d-flex  justify-content-end " style="margin-top: -15px;"> 1-Apr-22 to 30-Apr-22</span>
+                    </h6>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table " border="1px" style="background-color: rgba(33,57,77,255);color:#fff;">
+
+                        <thead>
+
+                            <tr>
+                                
+                                <th rowspan="8"   class="align-middle text-white "> <h6 class="d-flex align-items-sm-start par p-1 py-1" style="margin-left: 20px;width: 10%;">Date</h6></th>
+                                <th rowspan="8"   class="align-middle text-white "> <h6 class="d-flex align-items-sm-start par p-1 py-1" style="margin-left: 20px;">Particular</h6></th>
+                                <th rowspan="8"   class="align-middle text-white "> <h6 class="d-flex align-items-sm-start par p-1 py-1" style="margin-left: 20px;">Vch type</h6></th>
+                                <th rowspan="8"   class="align-middle text-white "> <h6 class="d-flex align-items-sm-start par p-1 py-1" style="margin-left: 20px;">Vch no</h6></th>
+                                
+                                  
+                              </tr>
+                              <tr>
+                               
+                                <th colspan="2" class="text-center text-white" style="width: 14%;"><h6> <strong> Inwards </strong></h6></th>
+                                <th colspan="2" class="text-center text-white" style="width: 14%;"><h6> <strong> Outwards </strong></h6></th>
+                                <th colspan="2" class="text-center text-white " style="width: 14%;"><h6> <strong>closing balance</strong></h6></th>
+
+                              </tr>
+                              <tr>
+                                <th class="text-center text-white">Quantity</th>
+                                <th class="text-center text-white">value</th>
+                                <th class="text-center text-white">Quantity</th>
+                                <th class="text-center text-white">value</th>
+                                <th class="text-center text-white">Quantity</th>
+                                <th class="text-center text-white">value</th>
+                                
+                              </tr>
+
+                              
+
+                             
+
+
+
+
+
+                        </thead>
+                        
+
+                        <tbody>
+                            <tr class="table-row" data-href="">
+                                <td  style="text-align: center;"><i>Opening Balance</i><i class="float-right "></i></td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align: end;"><strong></strong></td>
+                                <td style="text-align: center;">{{std.quantity}} BTL</td>
+                                <td style="text-align: center;">{{std.value}}</td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align: center;">{{std.quantity}} BTL</td>
+                                <td style="text-align: center;">{{std.value}}</td>
+                                
+                               
+
+                            </tr>
+                            
+                            <!-- {% for i in mo %} -->
+                            
+                            
+                            
+                            <tr class="table-row" data-href="">
+                                <td>April  1</td>
+                                
+                                 
+                                <!-- {% if i.leger_month_closing_set.all %}
+                                 
+                                {% for j in i.leger_month_closing_set.all %}
+                                 
+                                    {% if j.Ledger == le %} -->
+
+                                 
+                                 
+                                <td style="text-align: end;"><strong></strong></td>
+                                <td style="text-align: end;"><strong></strong></td>
+                                <td style="text-align: end;"><strong></strong></td>
+                                <td></td>
+                                <td></td>
+                                
+                               
+                                
+                                
+                                
+                                    
+                                            
+                                
+                              
+                                    <!-- {% endif %} -->
+                                    
+
+                                
+
+                               
+                                
+                                <!-- {% endfor %} -->
+                                
+                                
+
+                                 <!-- {% else%} -->
+                                 <!-- <td style="text-align: end;"><strong></strong></td>
+                                 <td style="text-align: end;"><strong></strong></td>
+                                 <td style="text-align: end;"><strong></strong></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td>
+                                 <td></td> -->
+                                 <!-- {% endif %} -->
+
+                            </tr>
+                            
+                            <!-- {% endfor %} -->
+
+                           {% for v in vouch %}
+                            <tr class="table-row" >
+                                <td  style="text-align: center;"><a href="#">{{v.date}}</a></td>
+                                <td  style="text-align: center;">{{v.particular}}</td>
+                                <td  style="text-align: center;">{{v.voucher_type}}</td>
+                                <td  style="text-align: center;"><strong>{{v.voucher_number}}</strong></td>
+                            {% if v.voucher_type == 'sales' %}
+                                <td></td>
+                                <td></td>
+                                <td  style="text-align: center;">{{v.quntity}} BTL</td>
+                                <td  style="text-align: center;">{{v.value}}</td>
+                                <td></td>
+                                <td></td>
+                            {% elif v.voucher_type == 'purchase' %}
+                                <td  style="text-align: center;">{{v.quntity}} BTL</td>
+                                <td  style="text-align: center;">{{v.value}}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            {% endif %}
+                            </tr>
+                            {% endfor %}
+
+                            
+<!--                            
+                            <tr class="table-row">
+                                <td>March</td>
+                                <td></td>
+                                <td></td>
+                                <td style="text-align: end;"><strong></strong></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+
+                            </tr> -->
+
+                            
+                            <tr class="table-row">
+                                <th  ><h6 class="d-flex align-items-sm-start par p-1 py-1 foot" style="margin-left: 20px;">Total as per deafault valuation</h6></th>
+                                
+                                <th  style="text-align: end;"></th>
+                                <th  style="text-align: end;"></th>
+                                <th  style="text-align: center;"></th>
+                                <th style="text-align: center;">{{total_purchase_quntity}} BTL</th>
+                                <td style="text-align: center;">{{total_purchase_value}}</td>
+                                <td style="text-align: center;">{{total_sales_quntity}} BTL</td>
+                                <td  style="text-align: center;">{{total_sales_value}}</td>
+                                <td style="text-align: center;">{{closing_qun}} BTL</td>
+                                <td style="text-align: center;">{{closing_val}}</td>
+                                
+                            </tr>
+                            
+
+                            
+
+                            
+
+                            
+
+                            
+
+
+                        </tbody>
+                        
+
+
+
+
+                    
+                    </table>
+                  </div>
+            </div>
+        </div>
     </div>
     
-    
-     </div>
-    
-        <script>
-    
-                        
-                  function showList() {
-                      document.getElementById("list-div").style.visibility = "visible";
-                  }
-                  function hideList(valueDIv) {
-                      document.getElementById("primary-text").value=valueDIv;
-                      document.getElementById("list-div").style.visibility = "hidden";
-                  }
 
-                  function validateForm(){
+    <script>
+        $(document).ready(function($) {
+            $(".table-row").click(function() {
+                window.document.location = $(this).data("href");
+            });
+        });
+    </script>
 
-                        var x=document.forms["myForm"]["name"].value;
-                        if (x==null || x=="")
-                        {
-                        alert("Name must be filled out");
-                        return false;
-                        }
-                    }
-                    </script>
 {% endblock %}

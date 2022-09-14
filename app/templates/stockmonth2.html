@@ -42,7 +42,7 @@ cursor:pointer;
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table " style="background-color: rgba(33,57,77,255);color:#fff;">
+                    <table class="table " border="1px" style="background-color: rgba(33,57,77,255);color:#fff;">
 
                         <thead>
 
@@ -57,7 +57,7 @@ cursor:pointer;
                               </tr>
                               <tr>
                                
-                                <th colspan="2" class="text-center text-white" style="width: 14%;"><h6> <strong> Outwards </strong></h6></th>
+                                <th colspan="2" class="text-center text-white" style="width: 14%;"><h6> <strong> Inwards </strong></h6></th>
                                 <th colspan="2" class="text-center text-white" style="width: 14%;"><h6> <strong> Outwards </strong></h6></th>
                                 <th colspan="2" class="text-center text-white " style="width: 14%;"><h6> <strong>closing balance</strong></h6></th>
 
@@ -85,13 +85,16 @@ cursor:pointer;
 
                         <tbody>
                             <tr class="table-row" data-href="">
-                                <td><i>Opening Balance</i><i class="float-right "></i></td>
+                                <td  style="text-align: center;"><i>Opening Balance</i><i class="float-right "></i></td>
                                 <td></td>
                                 <td></td>
-                                <td style="text-align: end;"><strong>{{std.opening_balance}}</strong></td>
+                                <td style="text-align: end;"><strong></strong></td>
+                                <td style="text-align: center;">{{std.quantity}} BTL</td>
+                                <td style="text-align: center;">{{std.value}}</td>
                                 <td></td>
-                                <td>89</td>
-                                <td>89</td>
+                                <td></td>
+                                <td style="text-align: center;">{{std.quantity}} BTL</td>
+                                <td style="text-align: center;">{{std.value}}</td>
                                 
                                
 
@@ -102,7 +105,7 @@ cursor:pointer;
                             
                             
                             <tr class="table-row" data-href="">
-                                <td>April</td>
+                                <td>April  1</td>
                                 
                                  
                                 <!-- {% if i.leger_month_closing_set.all %}
@@ -117,6 +120,8 @@ cursor:pointer;
                                 <td style="text-align: end;"><strong></strong></td>
                                 <td style="text-align: end;"><strong></strong></td>
                                 <td></td>
+                                <td></td>
+                                
                                
                                 
                                 
@@ -151,22 +156,32 @@ cursor:pointer;
                             
                             <!-- {% endfor %} -->
 
-                           
+                           {% for v in vouch %}
                             <tr class="table-row" >
-                                <td><a href="#">April</a></td>
-                                <td ></td>
+                                <td  style="text-align: center;"><a href="#">{{v.date}}</a></td>
+                                <td  style="text-align: center;">{{v.particular}}</td>
+                                <td  style="text-align: center;">{{v.voucher_type}}</td>
+                                <td  style="text-align: center;"><strong>{{v.voucher_number}}</strong></td>
+                            {% if v.voucher_type == 'sales' %}
                                 <td></td>
-                                <td  style="text-align: center;"><strong>{{std.quantity}}</strong></td>
-                                <td  style="text-align: center;">{{std.value}}</td>
+                                <td></td>
+                                <td  style="text-align: center;">{{v.quntity}} BTL</td>
+                                <td  style="text-align: center;">{{v.value}}</td>
                                 <td></td>
                                 <td></td>
-                               
-                                
-
+                            {% elif v.voucher_type == 'purchase' %}
+                                <td  style="text-align: center;">{{v.quntity}} BTL</td>
+                                <td  style="text-align: center;">{{v.value}}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            {% endif %}
                             </tr>
+                            {% endfor %}
 
                             
-                           
+<!--                            
                             <tr class="table-row">
                                 <td>March</td>
                                 <td></td>
@@ -176,18 +191,21 @@ cursor:pointer;
                                 <td></td>
                                 <td></td>
 
-                            </tr>
+                            </tr> -->
 
-
+                            
                             <tr class="table-row">
-                                <th  ><h6 class="d-flex align-items-sm-start par p-1 py-1 foot" style="margin-left: 20px;">Grand Total</h6></th>
+                                <th  ><h6 class="d-flex align-items-sm-start par p-1 py-1 foot" style="margin-left: 20px;">Total as per deafault valuation</h6></th>
                                 
-                                <th  style="text-align: end;">{{total_debit}}</th>
                                 <th  style="text-align: end;"></th>
-                                <th  style="text-align: center;">{{std.quantity}}</th>
-                                <th style="text-align: center;"> {{std.value}}</th>
-                                <td></td>
-                                <td></td>
+                                <th  style="text-align: end;"></th>
+                                <th  style="text-align: center;"></th>
+                                <th style="text-align: center;">{{total_purchase_quntity}} BTL</th>
+                                <td style="text-align: center;">{{total_purchase_value}}</td>
+                                <td style="text-align: center;">{{total_sales_quntity}} BTL</td>
+                                <td  style="text-align: center;">{{total_sales_value}}</td>
+                                <td style="text-align: center;">{{closing_qun}} BTL</td>
+                                <td style="text-align: center;">{{closing_val}}</td>
                                 
                             </tr>
                             

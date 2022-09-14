@@ -3,5 +3,7 @@ from . models import *
 # Register your models here.
 
 
-admin.site.register(voucher2)
+
+admin.site.register(add_voucher)
+admin.site.register(add_voucher2)
 

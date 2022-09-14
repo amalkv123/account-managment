@@ -37,6 +37,7 @@ urlpatterns = [
     path('payhead_list',views.payhead_list,name='payhead_list'),
     path('stock_month/<int:pk>',views.stock_month,name='stock_month'),
     path('stock_month2/<int:pk>',views.stock_month2,name='stock_month2'),
+    path('stock_voucher/<int:pk>',views.stock_voucher,name='stock_voucher'),
     
     
    

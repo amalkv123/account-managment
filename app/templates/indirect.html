@@ -61,6 +61,12 @@
         padding: 10px;
         margin-left: -60px;
     }
+    .loss2{
+        visibility: hidden;
+       
+        
+    }
+    
     </style>
 
 
@@ -97,16 +103,28 @@
 
                 {% endfor  %}
 
+
+
+
+
+
+
+            <div class="loss2"><strong id="bab2">{{totalc}}</strong><strong id="bab4">{{totald}}</strong></div>
+
+
+
+
             <ul class="ul" style="margin-top: 50px;">
                 
                 {% for t in stm %}
+                
                
                  {% if t.ledger_cr_db == "Cr" %}
-                 <li class="list2"><a href="{% url 'indirectmonth' t.id %}">{{t.ledger_name}}<i class="open" style="margin-left: 300px;">{{t.ledger_opening_bal}}.00</i></a></li>
+                 <li class="list2"><a href="{% url 'indirectmonth' t.id %}">{{t.ledger_name}}<i class="open" style="margin-left: 300px;" id="bab5">.00</i></a></li>
                   {% else %}
                 <li class="list2"><a href="{% url 'indirectmonth' t.id %}">{{t.ledger_name}}<i class="open2">{{t.ledger_opening_bal}}.00</i></a></li>
                   {% endif %}
-
+                  <strong id="bab" class="loss2">{{t.ledger_opening_bal}}</strong>
                 {% endfor  %}
     
                
@@ -144,6 +162,33 @@
             
         </div>
         <script>
+setTimeout(function ad(){ 
+    var a=document.getElementById('bab').innerHTML
+    var b=document.getElementById('bab2').innerHTML
+    var c=document.getElementById('bab4').innerHTML
+    
+    
+    var d1 = parseInt(a);
+    var d2 = parseInt(b);
+    var d4 = parseInt(c);
+    
+    
+    var d=d1+d2;
+    var d5=d4-d;
+    var d6=d5;
+    
+    
+    document.getElementById("bab5").innerHTML = d5+".00";
+    document.getElementById("bab6").innerHTML = d6+".00";
+   
+    }, 2000);
+
+
+
+
+
+
+
 
     function add(){
             let sum = 0;

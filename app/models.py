@@ -187,16 +187,29 @@ class Ledger_sundry(models.Model):
 
     
 
-class voucher2(models.Model):
-    Date2 = models.CharField(max_length=225,default="Null",blank=True)
-    Particulars2 = models.CharField(max_length=225,default="Null",blank=True)
-    VchType2 =  models.CharField(max_length=225,default="Null",blank=True)
-    VchNo2 = models.CharField(max_length=225,default="Null",blank=True)
-    Debit2=models.CharField(max_length=225,default="Null",blank=True)
-    Credit2 = models.CharField(max_length=225,default="Null",blank=True)
-   
+
+
+
+class add_voucher(models.Model):
+    date=models.CharField(max_length=225)
+    particular=models.CharField(max_length=225)
+    voucher_type=models.CharField(max_length=225)
+    voucher_number=models.CharField(max_length=225)
+    quntity=models.CharField(max_length=225)
+    value=models.CharField(max_length=225)
+
     def __str__(self):
-        return self.Particulars2
+        return self.particular
 
 
+class add_voucher2(models.Model):
+    date=models.CharField(max_length=225,default="Null",blank=True)
+    particular=models.CharField(max_length=225,default="Null",blank=True)
+    voucher_type=models.CharField(max_length=225,default="Null",blank=True)
+    voucher_number=models.CharField(max_length=225,default="Null",blank=True)
+    debit=models.CharField(max_length=225,default="Null",blank=True)
+    credit=models.CharField(max_length=225,default="Null",blank=True)
+
+    def __str__(self):
+        return self.particular
 

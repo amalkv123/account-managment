@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 import os
-from app.models import crtcompony,create_payhead,compute_information,Rounding,gratuity,CreateStockGrp,stock_item_crt,Ledger,Ledger_Banking_Details,Ledger_Mailing_Address,Ledger_Tax_Register,Ledger_Satutory,Ledger_Rounding,ledger_tax,Ledger_sundry,group_summary,voucher2
+from app.models import crtcompony,create_payhead,compute_information,Rounding,gratuity,CreateStockGrp,stock_item_crt,Ledger,Ledger_Banking_Details,Ledger_Mailing_Address,Ledger_Tax_Register,Ledger_Satutory,Ledger_Rounding,ledger_tax,Ledger_sundry,group_summary,add_voucher,add_voucher2
 from django.contrib.auth.models import auth,User
 from django.contrib import messages
 
@@ -203,8 +203,18 @@ def indirect(request):
     stm=Ledger.objects.filter(group_under='Expences_Indirect')
     balance=create_payhead.objects.all()
     balance_le=Ledger.objects.all()
+    data2=add_voucher2.objects.all()
+    totald=0
+    totalc=0
+    
     total=0
     total_d=0
+
+    for i in data2:
+        totald+=int(i.debit)
+        totalc+=int(i.credit)
+
+
     for i in balance:
         if(i.under=='Income(Indirect)'):
             total+=int(i.opening_balance)
@@ -213,22 +223,35 @@ def indirect(request):
              total+=int(p.ledger_opening_bal) 
          elif((p.group_under=='Expences_Indirect') &(p.ledger_cr_db=='Dr')):
              total_d+=int(p.ledger_opening_bal) 
-    return render(request,'indirect.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
+    return render(request,'indirect.html',{'std':std,'stm':stm,'total':total,'total_d':total_d,'data2':data2,'totald':totald,'totalc':totalc})
 
 def indirectmonth(request,pk):
     data=Ledger.objects.get(id=pk)
-    return render(request, 'indirectmonth.html',{'p':data})
+    
+    data2=add_voucher2.objects.all()
+    
+    totald=0
+    totalc=0
+   
+    for i in data2:
+        totald+=int(i.debit)
+        totalc+=int(i.credit)
+
+    return render(request,'indirectmonth.html',{'p':data,'data2':data2,'totald':totald,'totalc':totalc})
 
 def indirectmonth2(request,pk):
     data=Ledger.objects.get(id=pk)
-    data2=voucher2.objects.all()
+    data2=add_voucher2.objects.all()
     
-    totalc=0
     totald=0
+    totalc=0
+   
     for i in data2:
-        totalc+=int(i.Credit2)
+        totald+=int(i.debit)
+        totalc+=int(i.credit)
+
         
-    return render(request,'indirectmonth2.html',{'p':data,'data2':data2,'totalc':totalc})
+    return render(request,'indirectmonth2.html',{'p':data,'data2':data2,'totald':totald,'totalc':totalc})
 
 
 
@@ -681,6 +704,34 @@ def stock_month(request,pk):
 def stock_month2(request,pk):
     std=group_summary.objects.get(id=pk)
     return render(request,'stockmonth2.html',{'p':std})
+
+def stock_voucher(request,pk):
+    std=group_summary.objects.get(id=pk)
+    vouch=add_voucher.objects.all()
+    total_value=0
+    total_qunity=0
+    total_val=int(std.value)
+    total_qun=int(std.quantity)
+    for i in vouch:
+        if (i.voucher_type=='sales'):
+            total_value +=int(i.value)
+            total_qunity+=int(i.quntity)
+        elif (i.voucher_type=='purchase'):
+            total_val+=int(i.value) 
+            total_qun+=int(i.quntity)
+    closing_qun=total_qun-total_qunity  
+    closing_val=total_val-total_value      
+    context={
+        'std':std,
+        'vouch':vouch,
+        'total_sales_value':total_value,
+        'total_sales_quntity':total_qunity, 
+        'total_purchase_value':total_val,
+        'total_purchase_quntity':total_qun,
+        'closing_qun':closing_qun,
+        'closing_val':closing_val,
+        }        
+    return render(request,'stockmonth2.html',context)
 
 
 

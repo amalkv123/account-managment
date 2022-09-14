@@ -10,6 +10,11 @@
         height: 600px;
         
     }
+    .loss2{
+        visibility: hidden;
+       
+        
+    }
     
     .head{
         border-bottom: 1px solid;
@@ -87,15 +92,17 @@
 
             <ul class="ul" style="margin-top: 30px;">
                
-               
+              
                 
                 <div class="row list2" >
-                <div class="col-sm-6 m-0 p-0" style="margin-top: -10px;"><li class="list2"><a href="#">Opening balance</a></li></div>
-                <div class="col-sm-6 m-0 p-0 "><li class="list2" style="margin-left: 500px;">{{p.ledger_opening_bal}}.00 Dr</li></div></div>
+                <div class="col-sm-0 m-0 p-0" style="margin-top: -10px;"><li class="list2"><a href="#">Opening balance</a></li></div>
+                <div class="col-sm-0 m-0 p-0 "><li class="list2" style="margin-left: 990px;" id="bab">{{p.ledger_opening_bal}}.00 Cr</li></div></div>
                
                 <div class="row list2">
-                    <div class="col-sm-6 m-0 p-0" ><li class="list2" style="margin-top: -2px;"><a href="{% url 'indirectmonth2' p.id %}">April</a></li></div>
-                    <div class="col-sm-6 m-0 p-0 "><li class="list2" style="margin-left: 500px;margin-top: -2px;">{{p.ledger_opening_bal}}.00 Dr</li></div></div>
+                    <div class="col-sm-10.5 m-0 p-0" ><li class="list2" style="margin-top: -2px;"><a href="{% url 'indirectmonth2' p.id %}">April</a></li></div>
+                    <div class="col-sm-1.5 m-0 p-0 "><li class="list2" style="margin-left: 820px;margin-top: -2px;" id="bab4">{{totald}}.00 </li></div>
+                    <div class="col-sm-1.5 m-0 p-0 "><li class="list2" style="margin-left: 70px;margin-top: -2px;" id="bab2">{{totalc}}.00 </li></div>
+                    <div class="col-sm-1.5 m-0 p-0 "><li class="list2" style="margin-left: 52px;margin-top: -2px; " id="bab5"> </li></div></div>
                    
                     <div class="row list2">
                         <div class="col-sm-6 m-0 p-0"><li class="list2" style="margin-top: -2px;"><a href="#">May</a></li></div></div>
@@ -143,8 +150,11 @@
            
 
             <div class="row ml-2" style="margin-top: 15px;margin-bottom: 15px; font-size: 18px;">
-                <div class="col-sm-11 m-0 p-0 " ><a style="margin-left: 30px;">Grand Total</a></div>
-                <div class="col-sm-1 m-0 p-0 " ><a class="total" >{{p.ledger_opening_bal}}.00 Dr</a></div>
+                <div class="col-sm-9 m-0 p-0 " ><a style="margin-left: 30px;">Grand Total</a></div>
+                <div class="col-sm-1 m-0 p-0 " style="margin-right: 70px;"><a class="total" >{{totald}}.00 </a></div>
+                <div class="col-sm-1 m-0 p-0 " ><a class="total" >{{totalc}}.00 </a></div>
+                
+                <div class="col-sm-1 m-0 p-0 " ><a class="total" id="bab6">.00 Dr</a></div>
                    
             </div>
 
@@ -153,4 +163,28 @@
           
             
         </div>
+
+        <script>
+           
+           setTimeout(function ad(){ 
+    var a=document.getElementById('bab').innerHTML
+    var b=document.getElementById('bab2').innerHTML
+    var c=document.getElementById('bab4').innerHTML
+    
+    
+    var d1 = parseInt(a);
+    var d2 = parseInt(b);
+    var d4 = parseInt(c);
+    
+    
+    var d=d1+d2;
+    var d5=d4-d;
+    var d6=d5;
+    
+    
+    document.getElementById("bab5").innerHTML = d5+".00";
+    document.getElementById("bab6").innerHTML = d6+".00";
+   
+    }, 2000);
+    </script>
         {% endblock %} 
