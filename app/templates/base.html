@@ -18,9 +18,9 @@
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Tally web</title>
+    <title>Fin sYs</title>
     <!--favicon-->
-   <!--- <link rel="icon" href="{% static 'assets/images/favicon-32x32.png' %}" type="image/png" /> -->
+    <link rel="icon" href="{% static 'assets/images/favicon-32x32.png' %}" type="image/png" />
     <!-- Vector CSS -->
     <link href="{% static 'assets/plugins/vectormap/jquery-jvectormap-2.0.2.css' %}" rel="stylesheet" />
     <!--plugins-->
@@ -36,6 +36,8 @@
     <link rel="stylesheet" href="{% static 'assets/css/icons.css' %}" />
     <!-- App CSS -->
     <link rel="stylesheet" href="{% static 'assets/css/app.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/profit.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/stock.css' %}" />
     <style>
         .a {
             font-family: "Poppins", sans-serif;
@@ -242,46 +244,16 @@
                                 <div class="menu-title">Alter</div>
                             </a>
                             <ul>
-                                <li><a href="changecompany"><i class="bx bx-right-arrow-alt"></i>Change compony</a>
+                                <li><a href="#"><i class="bx bx-right-arrow-alt"></i>Sal
+                    Records</a>
                                 </li>
-                                <li><a href="#"><i class="bx bx-right-arrow-alt"></i>Accounting Masters</a>
-                                    <ul>
-                                        <li><a href="group"><i class=" bx bx-caret-right"></i>Groups</a></li>
-                                        <li><a href="ledger"><i class=" bx bx-caret-right"></i>Ledgers</a></li>
-                                        <li><a href="voucher"><i class=" bx bx-caret-right"></i>Voucher Types</a></li>
-                                        
-                                        <li><a href="#"><i class=" bx bx-caret-right"></i>Currencies</a></li>
-                                        
-                                    </ul>
+                                <li><a href="#"><i class="bx bx-right-arrow-alt"></i>Invoices</a>
                                 </li>
-                                <li><a href="#"><i class="bx bx-right-arrow-alt"></i>Inventory Masters</a>
-                                    <ul>
-                                        <li><a href="simon"><i class=" bx bx-caret-right"></i>Stock Groups</a></li>
-                                        <li><a href="stockitem"><i class=" bx bx-caret-right"></i>Stock Items</a></li>
-                                        <li><a href="#"><i class=" bx bx-caret-right"></i>Stock Categories</a></li>
-                                        <li><a href="#"><i class=" bx bx-caret-right"></i>Units</a></li>
-                                        <li><a href="#"><i class=" bx bx-caret-right"></i>Godowns</a></li>
-                                       
-                                    </ul>
+                                <li><a href="#"><i class="bx bx-right-arrow-alt"></i>Customers</a>
                                 </li>
-                                <li><a href="#"><i class="bx bx-right-arrow-alt"></i>Payroll Masters</a>
-                                    <ul>
-                                        <li><a href=""><i class=" bx bx-caret-right"></i>Employee Categories</a></li>
-                                        <li><a href=""><i class=" bx bx-caret-right"></i>Employee Groups</a></li>
-                                        <li><a href="profit"><i class=" bx bx-caret-right"></i>Employees</a></li>
-                                        <li><a href="attendence"><i class=" bx bx-caret-right"></i>Attendance/Production Types</a></li>
-                                        <li><a href="payheads2"><i class=" bx bx-caret-right"></i>Pay Heads</a></li>
-                                       
-                                    </ul>
+                                <li><a href="#"><i class="bx bx-right-arrow-alt"></i>Product and
+                    Services</a>
                                 </li>
-                                <li><a href="#"><i class="bx bx-right-arrow-alt"></i>Statutory details</a>
-                                    <ul>
-                                        
-                                        <li><a href="#"><i class=" bx bx-caret-right"></i>PAN/CIN Details</a></li>
-                                       
-                                    </ul>
-                                </li>
-                                
                             </ul>
                         </li>
                         <li>
@@ -306,8 +278,8 @@
                                 </li>
                                 <li><a href="#"><i class="bx bx-right-arrow-alt"></i>Inventory Master</a>
                                     <ul>
-                                        <li><a href="group"><i class=" bx bx-caret-right"></i>Stock Groups</a></li>
-                                        <li><a href="ledger"><i class=" bx bx-caret-right"></i>Stock Items</a></li>
+                                        <li><a href="#"><i class=" bx bx-caret-right"></i>Stock Groups</a></li>
+                                        <li><a href="{% url 'stock_items' %}"><i class=" bx bx-caret-right"></i>Stock Items</a></li>
                                         <li><a href="#"><i class=" bx bx-caret-right"></i>Stock Categories</a></li>
                                         <li><a href="#"><i class=" bx bx-caret-right"></i>Units</a></li>
                                         <li><a href="#"><i class=" bx bx-caret-right"></i>Godowns</a></li>
@@ -320,11 +292,10 @@
                                         <li><a href="ledger"><i class=" bx bx-caret-right"></i>Employee Groups</a></li>
                                         <li><a href="#"><i class=" bx bx-caret-right"></i>Employees</a></li>
                                         <li><a href="#"><i class=" bx bx-caret-right"></i>Attendance/Production Types</a></li>
-                                        <li><a href="#"><i class=" bx bx-caret-right"></i>Pay Heads</a></li>
+                                        <li><a href="{% url 'payhead' %}"><i class=" bx bx-caret-right"></i>Pay Heads</a></li>
                                        
                                     </ul>
                                 </li>
-                                
                             </ul>
                         </li>
                         <li>
@@ -347,7 +318,7 @@
                                 <div class="menu-title">Day Book</div>
                             </a>
                             <ul>
-                                <li><a href="profit"><i class="bx bx-right-arrow-alt"></i>Profit and
+                                <li><a href="{% url 'profit' %}"><i class="bx bx-right-arrow-alt"></i>Profit and
                     loss</a>
                                 </li>
                                 <li><a href="#"><i class="bx bx-right-arrow-alt"></i>Balance

@@ -1,71 +1,123 @@
+
+
+from functools import total_ordering
+from pickle import FALSE
 from django.shortcuts import render,redirect
-import os
-from app.models import crtcompony,create_payhead,compute_information,Rounding,gratuity,CreateStockGrp,stock_item_crt,Ledger,Ledger_Banking_Details,Ledger_Mailing_Address,Ledger_Tax_Register,Ledger_Satutory,Ledger_Rounding,ledger_tax,Ledger_sundry,group_summary,add_voucher,add_voucher2
-from django.contrib.auth.models import auth,User
-from django.contrib import messages
+from .models import CreateStockGrp,group_summary,payhead_crt,create_payhead,Ledger,ledger_tax,Ledger_Banking_Details,Ledger_Mailing_Address,Ledger_Rounding,Ledger_Satutory,Ledger_sundry,Ledger_Tax_Register,add_voucher,add_voucher2,closebalance
 
 # Create your views here.
 
-def base(request):
-    return render(request, 'base.html')
 
-def changecompany(request):
-    return render(request, 'changecompany.html')
+def index(request):
+    return render(request,'base.html')
 
-def createcompony(request):
-    return render(request, 'createcompony.html')
-
-def createcompony(request):
-    return render(request, 'createcompony.html')
-
-def createcompony(request):
-    return render(request, 'createcompony.html')
-
-def crtecompony(request):
-    if request.method=='POST':
-        comname=request.POST['componyname']
-        mailingname=request.POST['mailingname']
-        address=request.POST['address']
-        state=request.POST['state']
-        country=request.POST['country']
-        pincode=request.POST['pincode']
-        telphone=request.POST['telphone']
-        mobile=request.POST['mobile']
-        fax=request.POST['fax']
-        email=request.POST['email']
-        website=request.POST['website']
-        fyearbgn=request.POST['fyearbgn']
-        booksbgn=request.POST['booksbgn']
-        curncysymbl=request.POST['curncysymbl']
-        crncyname=request.POST['crncyname']
-        # items=request.FILES['file']
-        data=crtcompony(componyname=comname,
-                    mailingname=mailingname,
-                    address=address,
-                    state=state,
-                    country=country,
-                    pincode=pincode,
-                    telphone=telphone,
-                    mobile=mobile,
-                    fax=fax,
-                    email=email,
-                    website=website,
-                    fyearbgn=fyearbgn,
-                    booksbgn=booksbgn,
-                    curncysymbl=curncysymbl,
-                    crncyname=crncyname)
-        data.save()
-        messages.success(request,"Compony added successfully!")
+def grp_month(request,pk):
+    std=closebalance.objects.get(id=pk)
+    vouch2=add_voucher2.objects.all()
+    total_debit=0
+    total_credit=0
+    for i in vouch2:
+        total_debit+=int(i.debit)
+        total_credit+=int(i.credit)
         
-        return redirect('/')
+    opening_balance=total_debit-(int(std.ledger_opening_bal)+total_credit)
+    if opening_balance>0 :
+        std.ledger_type=opening_balance
+        std.provide_banking_details=0
 
-def selectcompony(request):
-    data=crtcompony.objects.all()
-    return render(request,'selectcompony.html',{'data':data})
+        std.save()
+        
+    else :
+        std.provide_banking_details=opening_balance*-1
+        std.ledger_type=0
+        std.save()
+            
+    return render(request,'group_month.html',{'std':std,'vouch2':vouch2,'total_debit':total_debit,'total_credit':total_credit,'opening_balance':opening_balance})
+
+def sales_month(request,pk):
+    std=Ledger.objects.get(id=pk)
+    
+    vouch2=add_voucher2.objects.all()
+    total_debit=0
+    total_credit=0
+    for i in vouch2:
+        total_debit+=int(i.debit)
+        total_credit+=int(i.credit)
+        
+    opening_balance=total_debit-(int(std.ledger_opening_bal)+total_credit)
+    
+    # std.ledger_type=opening_balance
+    # std.save()
+    
+    return render(request,'sales_month.html',{'std':std,'total_debit':total_debit,'total_credit':total_credit,'opening_balance':opening_balance})
 
 
+def payhead_month(request,pk):
+    std=create_payhead.objects.get(id=pk)
+    vouch2=add_voucher2.objects.all()
+    total_debit=0
+    total_credit=0
+    for i in vouch2:
+        total_debit+=int(i.debit)
+        total_credit+=int(i.credit)
+        
+    opening_balance=total_debit-int(std.opening_balance)+total_credit
+    return render(request,'month_payhead.html',{'std':std,'total_debit':total_debit,'total_credit':total_credit,'opening_balance':opening_balance})
 
+def pay_voucher(request,pk):
+    std=create_payhead.objects.get(id=pk)
+    vouch2=add_voucher2.objects.all()
+    total_debit=0
+    total_credit=0
+    
+    for i in vouch2 :
+        total_debit+=int(i.debit)
+        total_credit+=int(i.credit)
+        
+    opening_balance=total_debit-int(std.opening_balance)+total_credit
+    
+    if opening_balance>0 :
+        std.leave_withpay=opening_balance
+        std.save()
+        
+    else :
+        std.leave_with_out_pay=opening_balance*-1
+        std.save()
+    
+    return render(request,'payhead_voucher.html',{'std':std,'vouch2':vouch2,'total_debit':total_debit,'total_credit':total_credit,'opening_balance':opening_balance})
 
+def stock_voucher(request,pk):
+    std=group_summary.objects.get(id=pk)
+    vouch=add_voucher.objects.all()
+    total_value=0
+    total_qunity=0
+    total_val=int(std.value)
+    total_qun=int(std.quantity)
+    for i in vouch:
+        if (i.voucher_type=='sales'):
+            total_value +=int(i.value)
+            total_qunity+=int(i.quntity)
+        elif (i.voucher_type=='purchase'):
+            total_val+=int(i.value) 
+            total_qun+=int(i.quntity)
+    closing_qun=total_qun-total_qunity  
+    closing_val=total_val-total_value 
+    
+    std.rate_of_duty=closing_val
+    std.additional=closing_qun
+    std.save()    
+    
+    context={
+        'std':std,
+        'vouch':vouch,
+        'total_sales_value':total_value,
+        'total_sales_quntity':total_qunity, 
+        'total_purchase_value':total_val,
+        'total_purchase_quntity':total_qun,
+        'closing_qun':closing_qun,
+        'closing_val':closing_val,
+        }        
+    return render(request,'stock_voucher.html',context)
 
 
 def profit(request):
@@ -80,188 +132,477 @@ def profit(request):
     total_purch=0
     total_direct_exp=0
     total_indirect=0
+    #sales account total
     for i in balance:
         if(i.group_under=='Sales_Account'):
-            total+=int(i.ledger_opening_bal)
+            total+=int(i.ledger_type)
+            total+=int(i.provide_banking_details)
             
+    #indirect income total        
     for i in balance_py:
         if(i.under=='Income(Indirect)'):
-            total_income+=int(i.opening_balance)
+            total_income+=int(i.leave_withpay)
+            total_income+=int(i.leave_with_out_pay)
     for p in balance_le:
          if(p.group_under=='income_Indirect'):
-             total_income+=int(p.ledger_opening_bal) 
+             total_income+=int(p.ledger_type) 
+             total_income+=int(p.provide_banking_details)
+             
+    #direct income total
              
     for i in balance_py:
         if(i.under=='Direct Incomes'):
-            total_direct+=int(i.opening_balance)    
+            total_direct+=int(i.leave_withpay) 
+            total_direct+=int(i.leave_with_out_pay) 
     
     for p in balance_le:
         if(p.group_under=='Direct Incomes'):
-            total_direct+=int(p.ledger_opening_bal) 
-
+            total_direct+=int(p.ledger_type) 
+            total_direct+=int(p.provide_banking_details)
+            
+    #closing stock
     for k in  balance_group:
         total_grp+=int(k.value)
-    
-    
         
-    #second particular 
+    #purchase account total 
     
     for i in balance:
         if(i.group_under=='Purchase_Account'):
-            total_purch+=int(i.ledger_opening_bal)
+            total_purch+=int(i.ledger_type)
+            total_purch+=int(i.provide_banking_details)
     
-    # indirect expenses total
+    #direct expenses total
            
     for i in balance_py:
         if(i.under=='Direct Expenses'):
-            total_direct_exp+=int(i.opening_balance)    
+            total_direct_exp+=int(i.leave_withpay) 
+            total_direct_exp+=int(i.leave_with_out_pay)     
     
     for p in balance_le:
         if(p.group_under=='Direct Expenses'):
-            total_direct_exp+=int(p.ledger_opening_bal) 
+            total_direct_exp+=int(p.ledger_type) 
+            total_direct_exp+=int(p.provide_banking_details) 
             
     #indirect expenses total   
     
     for i in balance_py:
         if(i.under=='Indirect Expenses'):
-            total_indirect+=int(i.opening_balance)
+            total_indirect+=int(i.leave_withpay)
+            total_indirect+=int(i.leave_with_out_pay)
     for p in balance_le:
          if(p.group_under=='Expences_Indirect'):
-            total_indirect+=int(p.ledger_opening_bal)    
+            total_indirect+=int(p.ledger_type) 
+            total_indirect+=int(p.provide_banking_details)    
+            
+    #closing stock
+    std=group_summary.objects.all()
+    vouch=add_voucher.objects.all()
+    total_val=0
+    total_qun=0
+    total_value=0
+    total_qunity=0
+    
+    for i in vouch:
+        if (i.voucher_type=='sales'):
+            total_value+=int(i.value)
+            total_qunity+=int(i.quntity)
+        elif (i.voucher_type=='purchase'):
+            total_val+=int(i.value) 
+            total_qun+=int(i.quntity)
+       
+    for p in std:
+        total_val+=int(p.value)
+        total_qun+=int(p.quantity)
+                
+    closing_value=total_val
+    closing_quntity=total_qun-total_qunity        
             
                    
-    return render(request,'profit.html',{'total':total,'total_income':total_income,'total_direct':total_direct,'total_grp':total_grp,'total_purch':total_purch,'total_direct_exp':total_direct_exp,'total_indirect':total_indirect}) 
-
-
-def profitgroup(request):
-    std=CreateStockGrp.objects.all()
-    balance_group=group_summary.objects.all()
-    
-    total_grp=0
-    
-    for i in  balance_group:
-        total_grp+=int(i.value)
-   
-    
-    return render(request, 'profitgroup.html',{'p':std,'total_grp':total_grp})
+    return render(request,'profit.html',{'total':total,'total_income':total_income,'total_direct':total_direct,'total_grp':total_grp,'total_purch':total_purch,'total_direct_exp':total_direct_exp,'total_indirect':total_indirect,'closing_value':closing_value,'closing_quntity':closing_quntity,}) 
 
 
 
-def expence(request):
-    std=create_payhead.objects.filter(under='Income(Indirect)')
-    stm=Ledger.objects.filter(group_under='Direct Expenses')
+
+
+def  payhead_list(request):
+    std=create_payhead.objects.filter(under='Direct Incomes')
+    stm=Ledger.objects.filter(group_under='Direct Incomes')
     balance=create_payhead.objects.all()
     balance_le=Ledger.objects.all()
     total=0
     total_d=0
     for i in balance:
-        if(i.under=='Income(Indirect)'):
-            total+=int(i.opening_balance)
+        if(i.under=='Direct Incomes'):
+            total+=int(i.leave_withpay)
+            total_d+=int(i.leave_with_out_pay)
     for p in balance_le:
-         if((p.group_under=='Direct Expenses') &(p.ledger_cr_db=='Cr')):
-             total+=int(p.ledger_opening_bal) 
-         elif((p.group_under=='Direct Expenses') &(p.ledger_cr_db=='Dr')):
-             total_d+=int(p.ledger_opening_bal) 
-    return render(request,'expence.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
+         if(p.group_under=='Direct Incomes') :
+             total+=int(p.ledger_type) 
+             total_d+=int(p.provide_banking_details)
+         
+    
+    
+    return render(request,'payhead_items.html',{'std':std,'stm':stm,'total':total,'total_d':total_d}) 
 
 
-def expensemonth(request,pk):
-    data=Ledger.objects.get(id=pk)
-    return render(request,'expensemonth.html',{'p':data})#Expences_direct Direct Expenses
 
-def expensemonth2(request,pk):
-    data=Ledger.objects.get(id=pk)
-    return render(request, 'indirectmonth2.html',{'p':data})
+def direct_exprenses(request):
+    std=create_payhead.objects.filter(under='Direct Expenses')
+    stm=Ledger.objects.filter(group_under='Direct Expenses')
+    total=0
+    total_d=0
+    for i in std:
+        total+=int(i.leave_withpay)
+        total_d+=int(i.leave_with_out_pay)
+    for p in stm:
+        total+=int(p.ledger_type) 
+        total_d+=int(p.provide_banking_details)
+    return render(request,'direct_expenses.html',{'std':std,'stm':stm,'total':total,'total_d':total_d}) 
+
+def sales(request):
+    std=Ledger.objects.filter(group_under='Sales_Account')
+    balance=Ledger.objects.all()
+    total=0
+    total_d=0
+    for i in balance:
+        if (i.group_under=='Sales_Account') :
+            total+=int(i.ledger_type)
+            total_d+=int(i.provide_banking_details)
+        
+                 
+    return render(request,'sales_accounts.html',{'std':std,'total':total,'total_d':total_d})
 
 def purchase(request):
-    std=create_payhead.objects.filter(under='Income(Indirect)')
-    stm=Ledger.objects.filter(group_under='Purchase_Account')
-    balance=create_payhead.objects.all()
-    balance_le=Ledger.objects.all()
+    std=Ledger.objects.filter(group_under='Purchase_Account')
+    
     total=0
     total_d=0
-    for i in balance:
-        if(i.under=='Income(Indirect)'):
-            total+=int(i.opening_balance)
-    for p in balance_le:
-         if((p.group_under=='Purchase_Account') &(p.ledger_cr_db=='Cr')):
-             total+=int(p.ledger_opening_bal) 
-         elif((p.group_under=='Purchase_Account') &(p.ledger_cr_db=='Dr')):
-             total_d+=int(p.ledger_opening_bal) 
-    return render(request,'purchase.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
+    for i in std:
+        total+=int(i.ledger_type)
+        total_d+=int(i.provide_banking_details)
+    return render(request,'purchase_list.html',{'std':std,'total':total,'total_d':total_d})
 
-def purchasemonth(request,pk):
-    data=Ledger.objects.get(id=pk)
-    return render(request,'purchasemonth.html',{'p':data})
 
-def purchasemonth2(request,pk):
-    data=Ledger.objects.get(id=pk)
-    return render(request, 'indirectmonth2.html',{'p':data})
+
+
+def stock_month(request,pk):
+    std=group_summary.objects.get(id=pk)
+    
+    vouch=add_voucher.objects.all()
+    total_value=0
+    total_qunity=0
+    total_val=int(std.value)
+    total_qun=int(std.quantity)
+    for i in vouch:
+        if (i.voucher_type=='sales'):
+            total_value +=int(i.value)
+            total_qunity+=int(i.quntity)
+        elif (i.voucher_type=='purchase'):
+            total_val+=int(i.value) 
+            total_qun+=int(i.quntity)
+    closing_qun=total_qun-total_qunity  
+    closing_val=total_val-total_value      
+    context={
+        'std':std,
+        'vouch':vouch,
+        'total_sales_value':total_value,
+        'total_sales_quntity':total_qunity, 
+        'total_purchase_value':total_val,
+        'total_purchase_quntity':total_qun,
+        'closing_qun':closing_qun,
+        'closing_val':closing_val,
+        }        
+    
+    return render(request,'stock_month.html',context)
+
+def item_list(request,pk):
+    std=group_summary.objects.filter(CreateStockGrp_id=pk)
+    vouch=add_voucher.objects.all()
+    total=0
+    total_qty=0
+    total_value=0
+    total_qunity=0
+    
+    for p in std:
+        total_qun=int(p.quantity)
+        total_val=int(p.value)
+    # calculation of voucher
+    for i in vouch:
+        if (i.voucher_type=='sales'):
+            total_value +=int(i.value)
+            total_qunity+=int(i.quntity)
+        elif (i.voucher_type=='purchase'):
+            total_val+=int(i.value) 
+            total_qun+=int(i.quntity)
+            closing_qun=total_qun-total_qunity  
+    closing_val=total_val-total_value 
+   
+    
+    for i in std:
+        total+=int(i.value)
+        total_qty+=int(i.quantity)
+        
+    return render(request,'items.html',{'std':std,'total':total,'total_qty':total_qty,'closing_val':closing_val,'closing_qun':closing_qun,}) 
+ 
+def items_2(request,pk):
+    ptm=group_summary.objects.filter(CreateStockGrp_id=pk)
+    ptc=CreateStockGrp.objects.get(id=pk)
+    
+    vouch=add_voucher.objects.all()
+    total=0
+    total_qty=0
+    total_value=0
+    total_qunity=0
+    
+    for p in ptm:
+        total_qun=int(p.quantity)
+        total_val=int(p.value)
+    # calculation of voucher
+    for i in vouch:
+        if (i.voucher_type=='sales'):
+            total_value +=int(i.value)
+            total_qunity+=int(i.quntity)
+        elif (i.voucher_type=='purchase'):
+            total_val+=int(i.value) 
+            total_qun+=int(i.quntity)
+            closing_qun=total_qun-total_qunity  
+    closing_val=total_val-total_value 
+   
+    
+    for i in ptm:
+        total+=int(i.value)
+        total_qty+=int(i.quantity)
+        
+    ptc.alias=total
+    ptc.save()    
+        
+    return render(request,'item_2.html',{'ptm':ptm,'closing_val':closing_val,'closing_qun':closing_qun,'total':total})
+    
+def stockgroup(request):
+    ptm=CreateStockGrp.objects.all()
+    std=group_summary.objects.all()
+    vouch=add_voucher.objects.all()
+    total_val=0
+    total_qun=0
+    total_value=0
+    total_qunity=0
+    
+    for i in vouch:
+        if (i.voucher_type=='sales'):
+            total_value+=int(i.value)
+            total_qunity+=int(i.quntity)
+        elif (i.voucher_type=='purchase'):
+            total_val+=int(i.value) 
+            total_qun+=int(i.quntity)
+       
+    for p in std:
+        total_val+=int(p.value)
+        total_qun+=int(p.quantity)
+                
+    closing_value=total_val-total_value
+    closing_quntity=total_qun-total_qunity
+    return render(request,'stockgroup.html',{'std':std,'closing_value':closing_value,'closing_quntity':closing_quntity,'ptm':ptm})
+
+def stock_item(request):
+    ptm=CreateStockGrp.objects.all()
+    std=group_summary.objects.all()
+    total_val=0
+    total_qun=0
+    for p in std:
+        total_val+=int(p.value)
+        total_qun+=int(p.quantity)
+        
+    return render(request,'stockgroup_2.html',{'std':std,'opening_value':total_val,'opening_quntity':total_qun,'ptm':ptm})
+    
 
 def indirect(request):
     std=create_payhead.objects.filter(under='Income(Indirect)')
-    stm=Ledger.objects.filter(group_under='Expences_Indirect')
-    balance=create_payhead.objects.all()
-    balance_le=Ledger.objects.all()
-    data2=add_voucher2.objects.all()
-    totald=0
-    totalc=0
+    stm=Ledger.objects.filter(group_under='income_Indirect')
     
     total=0
     total_d=0
-
-    for i in data2:
-        totald+=int(i.debit)
-        totalc+=int(i.credit)
-
-
-    for i in balance:
-        if(i.under=='Income(Indirect)'):
-            total+=int(i.opening_balance)
-    for p in balance_le:
-         if((p.group_under=='Expences_Indirect') &(p.ledger_cr_db=='Cr')):
-             total+=int(p.ledger_opening_bal) 
-         elif((p.group_under=='Expences_Indirect') &(p.ledger_cr_db=='Dr')):
-             total_d+=int(p.ledger_opening_bal) 
-    return render(request,'indirect.html',{'std':std,'stm':stm,'total':total,'total_d':total_d,'data2':data2,'totald':totald,'totalc':totalc})
-
-def indirectmonth(request,pk):
-    data=Ledger.objects.get(id=pk)
+    for i in std:
+        total+=int(i.leave_withpay)
+        total_d+=int(i.leave_with_out_pay)
+    for p in stm:
+        total+=int(p.ledger_type) 
+        total_d+=int(p.provide_banking_details)
     
-    data2=add_voucher2.objects.all()
     
-    totald=0
-    totalc=0
-   
-    for i in data2:
-        totald+=int(i.debit)
-        totalc+=int(i.credit)
+    return render(request,'indirect_income.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
 
-    return render(request,'indirectmonth.html',{'p':data,'data2':data2,'totald':totald,'totalc':totalc})
 
-def indirectmonth2(request,pk):
-    data=Ledger.objects.get(id=pk)
-    data2=add_voucher2.objects.all()
+
+def indirect_expenses(request):
+    std=create_payhead.objects.filter(under='Indirect Expenses')
+    stm=Ledger.objects.filter(group_under='Expences_Indirect')
     
-    totald=0
-    totalc=0
-   
-    for i in data2:
-        totald+=int(i.debit)
-        totalc+=int(i.credit)
+    total=0
+    total_d=0
+    for i in std:
+        total+=int(i.leave_withpay)
+        total_d+=int(i.leave_with_out_pay)
+    for p in stm:
+        total+=int(p.ledger_type) 
+        total_d+=int(p.provide_banking_details)
+    
+    
+    return render(request,'indirect_expences.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
 
+
+
+def stock_groups(request):
+    und=CreateStockGrp.objects.all()
+    if request.method=='POST':
+        name=request.POST['name']
+        alias=request.POST['alias']
+        under_name=request.POST['under_name']
+        quantities=request.POST['quantities']
+        stockgrp=CreateStockGrp(name=name,alias=alias,under_name=under_name,quantities=quantities)
+        stockgrp.save()
+        return redirect('stock_items')
+    return render(request,'group_stock.html',{'und':und})    
+
+
+
+def stock_group2(request):
+    ptm=CreateStockGrp.objects.all()
+    std=group_summary.objects.all()
+    total_val=0
+    total_qun=0
+    for p in std:
+        total_val+=int(p.value)
+        total_qun+=int(p.quantity)
         
-    return render(request,'indirectmonth2.html',{'p':data,'data2':data2,'totald':totald,'totalc':totalc})
+    return render(request,'stockgroup_2.html',{'std':std,'opening_value':total_val,'opening_quntity':total_qun,'ptm':ptm})
+    
 
 
+def stock_items(request):
+    grp=CreateStockGrp.objects.all()
+    if request.method=='POST':
+        name=request.POST['name']
+        alias=request.POST['alias']
+        under=request.POST['under']
+        grp1=CreateStockGrp.objects.get(id=under)
+        # category=request.POST['category',FALSE]
+        units=request.POST['units']
+        batches=request.POST['batches']
+        manufacturing_date=request.POST['manufacturing_date']
+        expiry_dates=request.POST['expiry_dates']
+        rate_of_duty=request.POST['rate_of_duty']
+        quantity=request.POST['quantity']
+        rate=request.POST['rate']
+        per=request.POST['per']
+        value=request.POST['value']
+        additional=request.POST['additional']
+        crt=group_summary(name=name,alias=alias,under=under,units=units,batches=batches,
+                           manufacturing_date=manufacturing_date,expiry_dates=expiry_dates,
+                           rate_of_duty=rate_of_duty,quantity=quantity,rate=rate,per=per,value=value,additional=additional,CreateStockGrp=grp1)
+        crt.save()
+        return redirect('stock_items')
+    return render(request,'stockitem.html',{'grp':grp})
 
 
-    #ledger
+def payhead(request):
+    # att=attendance_crt.objects.all()
+    pay=payhead_crt.objects.all()
+    if request.method=='POST':
+        name=request.POST['name']
+        alias=request.POST['alias']
+        pay_head_type=request.POST['payhead']
+        income_type=request.POST['income']
+        under=request.POST['under']
+        affect_net_salary=request.POST['netsalary']
+        payslip=request.POST['payslip']
+        calculation_of_gratuity=request.POST['caltype']
+        calculation_period=request.POST['ctype']
+        calculation_type=request.POST['caltype']
+        attendence_leave_withpay=request.POST['attendence with pay']
+        attendence_leave_with_outpay=request.POST['Attendance with out pay']
+        production_type=request.POST['ptype']
+        opening_balance=request.POST['balance']
 
+        #compute information
+        compute=request.POST['compute']
+        effective_from=request.POST['effective_from']
+        # amount_greaterthan=request.POST['', False]
+        amount_upto=request.POST['amount_upto']
+        slabtype=request.POST['slab_type']
+        value=request.POST['value']
 
+        #Rounding
+        round_method=request.POST['roundmethod']
+        limit=request.POST['limit']
+
+        #Gratuity
+        days_of_months=request.POST['days_of_months']
+        from_date=request.POST['from']
+        to=request.POST['to']
+        calculation_per_year=request.POST['eligiibility']
+
+        std=create_payhead(name=name,
+                           alias=alias,
+                           pay_type=pay_head_type,
+                           income_type=income_type,
+                           under=under,
+                           affect_net=affect_net_salary,
+                           payslip=payslip,
+                           calculation_of_gratuity=calculation_of_gratuity,
+                           cal_type=calculation_type,
+                           calculation_period=calculation_period,
+                           leave_withpay=attendence_leave_withpay,
+                           leave_with_out_pay=attendence_leave_with_outpay,
+                           production_type=production_type,
+                           opening_balance=opening_balance,
+                           compute=compute,
+                           effective_from=effective_from,
+                           #  amount_greater=amount_greaterthan,
+                           amount_upto=amount_upto,
+                           slab_type=slabtype,
+                           value=value,
+                           Rounding_Method=round_method,
+                           Round_limit=limit,
+                           days_of_months=days_of_months,
+                           number_of_months_from=from_date,
+                           to=to,
+                           calculation_per_year=calculation_per_year,
+                           
+        )
+        std.save()
+        return redirect('payhead')
+    return render(request,'payhead.html')   
+
+        # std2=compute_information(Pay_head_id=idd,
+        #                          compute=compute,
+        #                          effective_from=effective_from,
+        #                         #  amount_greater=amount_greaterthan,
+        #                          amount_upto=amount_upto,
+        #                          slab_type=slabtype,
+        #                          value=value,
+        # )
+        # std2.save()
+
+        # std3=Rounding(pay_head_id=idd,
+        #              Rounding_Method=round_method,
+        #              Round_limit=limit,
+        # )
+        # std3.save()
+
+        # std4=gratuity(pay_head_id=idd,
+        #              days_of_months=days_of_months,
+        #              number_of_months_from=from_date,
+        #              to=to,
+        #              calculation_per_year=calculation_per_year,
+        # )
+        # std4.save()
+        # messages.success(request,'successfully Added !!!')
+         
 
 def ledger(request):
     return render(request,'ledger.html')
+
+
 
 def save_ledger(request):
     if request.method == 'POST':
@@ -411,327 +752,5 @@ def save_ledger(request):
             Check_for_credit_days =Check_for_credit_dayss,
         )
         sndry_mdl.save()
-        messages.info(request,'LEDGER CREATED SUCCESSFULLY')
+        # messages.info(request,'LEDGER CREATED SUCCESSFULLY')
         return redirect('ledger')
-
-
-
-
-
-
-
-
-
-
-#stock
-
-def simon(request):
-    std=CreateStockGrp.objects.all()  
-    return render(request,'stockgroup2.html',{'std':std,})
-
-def stock_groups(request):
-    und=CreateStockGrp.objects.all()
-    if request.method=='POST':
-        name=request.POST['name']
-        alias=request.POST['alias']
-        under_name=request.POST['under_name']
-        quantities=request.POST['quantities']
-        stockgrp=CreateStockGrp(name=name,alias=alias,under_name=under_name,quantities=quantities)
-        stockgrp.save()
-        return redirect('stock_items')
-    return render(request,'group_stock.html',{'und':und})    
-
-def stockitem(request):
-    std=CreateStockGrp.objects.all()
-    return render(request,'stockitem.html',{'std':std})
-
-def stock_items(request):
-    grp=CreateStockGrp.objects.all()
-    if request.method=='POST':
-        name=request.POST['name']
-        alias=request.POST['alias']
-        under=request.POST['under']
-        # category=request.POST['category',FALSE]
-        units=request.POST['units']
-        batches=request.POST['batches']
-        grp1=CreateStockGrp.objects.get(id=under)
-        manufacturing_date=request.POST['manufacturing_date']
-        expiry_dates=request.POST['expiry_dates']
-        rate_of_duty=request.POST['rate_of_duty']
-        quantity=request.POST['quantity']
-        rate=request.POST['rate']
-        per=request.POST['per']
-        value=request.POST['value']
-        additional=request.POST['additional']
-        crt=group_summary(name=name,alias=alias,under=under,units=units,batches=batches,
-                           manufacturing_date=manufacturing_date,expiry_dates=expiry_dates,
-                           rate_of_duty=rate_of_duty,quantity=quantity,rate=rate,per=per,value=value,additional=additional,CreateStockGrp=grp1)
-        crt.save()
-        return redirect('stockitem')
-    return render(request,'stockitem.html',{'grp':grp})
-
-
-
-
-
-
-     #payheads
-
-
-
-
-
-def payheads2(request):
-    return render(request,'payheads.html')   
-
-
-def add_payhead(request):
-    if request.method=='POST':
-        name=request.POST['name']
-        alias=request.POST['alias']
-        pay_head_type=request.POST['payhead']
-        income_type=request.POST['income']
-        under=request.POST['under']
-        affect_net_salary=request.POST['netsalary']
-        payslip=request.POST['payslip']
-        calculation_of_gratuity=request.POST['caltype']
-        calculation_period=request.POST['ctype']
-        calculation_type=request.POST['caltype']
-        attendence_leave_withpay=request.POST['attendence with pay']
-        attendence_leave_with_outpay=request.POST['Attendance with out pay']
-        production_type=request.POST['ptype']
-        opening_balance=request.POST['balance']
-       
-
-        #compute information
-        compute=request.POST['compute']
-        effective_from=request.POST['effective_from']
-        # amount_greaterthan=request.POST['', False]
-        amount_upto=request.POST['amount_upto']
-        slabtype=request.POST['slab_type']
-        value=request.POST['value']
-
-        #Rounding
-        round_method=request.POST['roundmethod']
-        limit=request.POST['limit']
-
-        #Gratuity
-        days_of_months=request.POST['days_of_months']
-        from_date=request.POST['from']
-        to=request.POST['to']
-        calculation_per_year=request.POST['eligiibility']
-
-        std=create_payhead(name=name,
-                           alias=alias,
-                           pay_type=pay_head_type,
-                           income_type=income_type,
-                           under=under,
-                           affect_net=affect_net_salary,
-                           payslip=payslip,
-                           calculation_of_gratuity=calculation_of_gratuity,
-                           cal_type=calculation_type,
-                           calculation_period=calculation_period,
-                           leave_withpay=attendence_leave_withpay,
-                           leave_with_out_pay=attendence_leave_with_outpay,
-                           production_type=production_type,
-                           opening_balance=opening_balance,
-                           
-        )
-        std.save()
-        idd=std
-
-        std2=compute_information(Pay_head_id=idd,
-                                 compute=compute,
-                                 effective_from=effective_from,
-                                #  amount_greater=amount_greaterthan,
-                                 amount_upto=amount_upto,
-                                 slab_type=slabtype,
-                                 value=value,
-        )
-        std2.save()
-
-        std3=Rounding(pay_head_id=idd,
-                     Rounding_Method=round_method,
-                     Round_limit=limit,
-        )
-        std3.save()
-
-        std4=gratuity(pay_head_id=idd,
-                     days_of_months=days_of_months,
-                     number_of_months_from=from_date,
-                     to=to,
-                     calculation_per_year=calculation_per_year,
-        )
-        std4.save()
-        messages.success(request,'successfully Added !!!')
-        return redirect('payheads2')
-
-
-def payhead_edit2(request,pk):
-    if request.method=='POST':
-        data=create_payhead.objects.get(id=pk)
-        data.name=request.POST.get('name')
-        data.alias=request.POST.get('alias')
-        data.pay_type=request.POST.get('payhead')
-        data.income_type=request.POST.get('income')
-        data.under=request.POST.get('under')
-        data.affect_net=request.POST.get('netsalary')
-        data.payslip=request.POST.get('payslip')
-        data.calculation_of_gratuity=request.POST.get('caltype')
-        data.cal_type=request.POST.get('ctype')
-        data.calculation_period=request.POST.get('caltype')
-        data.leave_withpay=request.POST.get('attendence with pay')
-        data.leave_with_out_pay=request.POST.get('Attendance with out pay')
-        data.production_type=request.POST.get('ptype')
-        data.opening_balance=request.POST.get('balance')
-        data.save()
-
-        idd=data
-
-        data2=compute_information.objects.get(id=pk)
-        data2.compute=request.POST.get('compute')
-        data2.effective_from=request.POST.get('effective_from')
-        data2.amount_upto=request.POST.get('amount_upto')
-        data2.slab_type=request.POST.get('slab_type')
-        data2.value=request.POST.get('value')
-        data2.Pay_head_id=idd
-
-        data2.save()
-
-
-        data3=Rounding.objects.get(id=pk)
-        data3.Rounding_Method=request.POST.get('roundmethod')
-        data3.Round_limit=request.POST.get('limit')
-        data3.pay_head_id=idd
-        data3.save()
-
-        data4=gratuity.objects.get(id=pk)
-        data4.days_of_months=request.POST.get('days_of_months')
-        data4.number_of_months_from=request.POST.get('from')
-        data4.to=request.POST.get('to')
-        data4.calculation_per_year=request.POST.get('eligiibility')
-        data4.pay_head_id=idd
-        data4.save()
-        return redirect('payheads')
-    return render(request,'payhead_edit.html')
-    
-
-def primary(request):
-    return render(request, 'primarycost.html')
-
-def costcat(request):
-    return render(request, 'costcat.html')
-
-def costcentr(request):
-    return render(request, 'costcentr.html')
-
-def voucher(request):
-    return render(request, 'voucher.html')
-
-def vouchpage(request):
-    return render(request, 'vouchpage.html')
-
-
-
-
-
-def sales(request):
-    std=Ledger.objects.filter(group_under='Sales_Account')
-    balance=Ledger.objects.all()
-    total=0
-    total_d=0
-    for i in balance:
-        if ((i.group_under=='Sales_Account') &(i.ledger_cr_db=='Cr')):
-             total+=int(i.ledger_opening_bal) 
-        elif((i.group_under=='Sales_Account') &(i.ledger_cr_db=='Dr')):
-            total_d+=int(i.ledger_opening_bal) 
-                 
-    return render(request,'sales_accounts.html',{'std':std,'total':total,'total_d':total_d})
-
-def sales_month(request,pk):
-    std=Ledger.objects.get(id=pk)
-    return render(request,'sales_month.html',{'std':std})
-
-def grp_month(request,pk):
-    std=Ledger.objects.get(id=pk)
-    return render(request,'group_month.html',{'std':std})
-
-
-
-
-def  payhead_list(request):
-    std=create_payhead.objects.filter(under='Direct Incomes')
-    stm=Ledger.objects.filter(group_under='Direct Incomes')
-    balance=create_payhead.objects.all()
-    balance_le=Ledger.objects.all()
-    total=0
-    total_d=0
-    for i in balance:
-        if(i.under=='Direct Incomes'):
-            total+=int(i.opening_balance)
-    for p in balance_le:
-         if((p.group_under=='Direct Incomes') &(p.ledger_cr_db=='Cr')):
-             total+=int(p.ledger_opening_bal) 
-         elif((p.group_under=='Direct Incomes') &(p.ledger_cr_db=='Dr')):
-             total_d+=int(p.ledger_opening_bal) 
-    
-    
-    return render(request,'payhead_items.html',{'std':std,'stm':stm,'total':total,'total_d':total_d}) 
-
-
-
-
-def stockgroup(request):
-    std=CreateStockGrp.objects.all()  
-    return render(request,'stockgroup.html',{'std':std,})
-
-
-
-def item_list(request,pk):
-    std=group_summary.objects.filter(CreateStockGrp=pk)
-    # balance=group_summary.objects.all()
-    total=0
-    for i in std:
-        total+=int(i.value)
-    return render(request,'items.html',{'std':std,'total':total})  
-
-
-def stock_month(request,pk):
-    std=group_summary.objects.get(id=pk)
-    return render(request,'stock_month.html',{'p':std})
-
-
-def stock_month2(request,pk):
-    std=group_summary.objects.get(id=pk)
-    return render(request,'stockmonth2.html',{'p':std})
-
-def stock_voucher(request,pk):
-    std=group_summary.objects.get(id=pk)
-    vouch=add_voucher.objects.all()
-    total_value=0
-    total_qunity=0
-    total_val=int(std.value)
-    total_qun=int(std.quantity)
-    for i in vouch:
-        if (i.voucher_type=='sales'):
-            total_value +=int(i.value)
-            total_qunity+=int(i.quntity)
-        elif (i.voucher_type=='purchase'):
-            total_val+=int(i.value) 
-            total_qun+=int(i.quntity)
-    closing_qun=total_qun-total_qunity  
-    closing_val=total_val-total_value      
-    context={
-        'std':std,
-        'vouch':vouch,
-        'total_sales_value':total_value,
-        'total_sales_quntity':total_qunity, 
-        'total_purchase_value':total_val,
-        'total_purchase_quntity':total_qun,
-        'closing_qun':closing_qun,
-        'closing_val':closing_val,
-        }        
-    return render(request,'stockmonth2.html',context)
-
-
-

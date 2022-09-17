@@ -1,14 +1,26 @@
+
 {% extends 'base.html' %}
 
 
 {% block body %}
 
 <style type="text/css">
-
+    
 
     .b1{
         height: 600px;
         
+        
+    }
+    .open{
+        
+        float: right;
+       
+
+    }
+    .open2{
+        float: right;
+        margin-right: 200px;
     }
     
     .head{
@@ -32,6 +44,10 @@
     .list2{
         margin: 2px;
         list-style-type: none;
+        margin: 15px;
+        letter-spacing: 2px;
+        cursor: pointer;
+        
     }
     .list2:hover{
         background-color: darkgoldenrod;
@@ -51,6 +67,7 @@
         padding: 10px;
         margin-left: -60px;
     }
+
     </style>
 
 
@@ -58,22 +75,20 @@
 
 
 
-<div class="container-fluid "  style="border: 1px solid;background-color:rgba(0,0,0,.4);">
+<div class="container-fluid "  style="border: 1px solid; background-color:rgba(0,0,0,.4);">
     <div class="row">
         <div class="col-sm-12 m-0 p-0 b1 " style="border-right: 1px solid;" >
            
 
             <div class="row ml-0" style="border-bottom: 1px solid; margin: 0px;">
                 <div class="col-sm-9 m-0 p-0 head" ><h4 class=" par" style="margin-top: 20px;margin-left: 40px; ">particulars</h4></div>
-                    <div class="col-sm-3 m-0 p-0 head" style="border-left: 1px solid; "><p class=" ABC" style="margin-top: 20px;"><center><h6 style="margin-bottom: -20px;margin-top: 10px; ">Opening Stoke</h4><br>ABC Limited <br>For 1-Apr-22 </center></p>
+                    <div class="col-sm-3 m-0 p-0 head" style="border-left: 1px solid; "><p class=" ABC" style="margin-top: 20px;"><center>ABC Limited </br>For 1-Apr-22 </center></p>
                         
                 <div class="row" style="border-top: 1px solid; margin: 0px;">
-                    <div class="col-sm-9 m-0 p-0 " ><p class="ABC"><h6 style="margin-left: 100px;">Opening Balance</h6></p></div></div>
-                    <div class="row" >
-                        <div class="col-sm-4 m-0 p-0 "><p class="ABC"><h6 style="margin-left: 30px;">Quantity</h6></p></div>
-                        <div class="col-sm-4 m-0 p-0 "><p class="ABC"><h6 style="margin-left: 50px;">Rate</h6></p></div>
-                        <div class="col-sm-4 m-0 p-0 " ><p class="ABC"><h6 style="margin-left: 50px;">Value</h6></p></div>
-                    </div>
+                    <div class="col-sm-9 m-0 p-0 " ><p class="ABC"><h6 style="margin-left: 120px;">Opening Balance</h6></p></div></div>
+                    <div class="row" style="border-top: 1px solid; margin: 0px;">
+                        <div class="col-sm-6 mt-1 p-0 " ><p class="ABC"><h6 style="margin-left: 50px;">Debit</h6></p></div>
+                        <div class="col-sm-6 mt-1 p-0 " style="border-left: 1px solid;"><p class="ABC"><h6 style="margin-left: 50px;">Credit</h6></p></div></div>
                         
                     
                     
@@ -84,15 +99,24 @@
             </div>
 
             <ul class="ul" style="margin-top: 50px;">
-               
-                {% for p2 in p %}
                 
-                <div class="row list2" >
-                <div class="col-sm-6 m-0 p-0"><li class="list2"><a href="{% url 'item_list' p2.id %}">{{p2.name}}</a></li></div>
-                <div class="col-sm-6 m-0 p-0 "><li class="list2" style="margin-left: 500px;">{{total_grp}}.00</li></div></div>
                
-                {% endfor %}
+                
 
+
+                {% for p in std %}
+                
+                <li class="list2"><a href="{% url 'payhead_month' p.id %}">{{p.name}}</a><i class="open">{{p.leave_with_out_pay}}</i><i class="open2">{{p.leave_withpay}}</i></li>
+
+                {% endfor  %}
+                
+
+              
+                {% for t in stm %}
+               
+                <li class="list2"><a  href="{% url 'sales_month' t.id %}">{{t.ledger_name}}</a><i class="open">{{t.provide_banking_details}}</i><i class="open2">{{t.ledger_type}}</i></li>
+
+                {% endfor  %}
                
                
                
@@ -116,8 +140,9 @@
            
 
             <div class="row ml-2" style="margin-top: 15px;margin-bottom: 15px; font-size: 18px;">
-                <div class="col-sm-11 m-0 p-0 " ><a style="margin-left: 30px;">Grand Total</a></div>
-                <div class="col-sm-1 m-0 p-0 " ><a class="total" >.00</a></div>
+                <div class="col-sm-10 m-0 p-0 " ><a style="margin-left: 30px;">Grand Total</a></div>
+                <div class="col-sm-1 m-0 p-0 " ><a class="total" >{{total}}</a></div>
+                <div class="col-sm-1 m-0 p-0 " ><a class="total ml-2" >{{total_d}}</a></div>
                    
             </div>
 

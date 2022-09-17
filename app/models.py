@@ -1,70 +1,4 @@
 from django.db import models
-from django.template.defaultfilters import slugify
-from django.urls import reverse
-from django.contrib.auth.models import User
-
-
-class crtcompony(models.Model):
-    componyname = models.CharField(max_length=50)
-    mailingname = models.CharField (max_length=50)
-    address = models.CharField (max_length=50)
-    state = models.CharField (max_length=50)
-    country = models.CharField (max_length=50)
-    pincode = models.CharField (max_length=10)
-    telphone = models.CharField(max_length=10)
-    mobile = models.CharField(max_length=10)
-    fax = models.CharField(max_length=10)
-    email=models.EmailField()
-    website=models.CharField(max_length=100)
-    fyearbgn=models.DateField()
-    booksbgn=models.DateField()
-    curncysymbl=models.CharField(max_length=10)
-    crncyname=models.CharField(max_length=10)
-
-
-class create_payhead(models.Model):
-    name=models.CharField(max_length=225)
-    alias=models.CharField(max_length=225)
-    pay_type=models.CharField(max_length=225)
-    income_type=models.CharField(max_length=225)
-    under=models.CharField(max_length=225)
-    affect_net=models.CharField(max_length=225)
-    payslip=models.CharField(max_length=225)
-    calculation_of_gratuity=models.CharField(max_length=225)
-    cal_type=models.CharField(max_length=225)
-    calculation_period=models.CharField(max_length=225)
-    leave_withpay=models.CharField(max_length=225)
-    leave_with_out_pay=models.CharField(max_length=225)
-    production_type=models.CharField(max_length=225)
-    opening_balance=models.CharField(max_length=225) 
-    
-
-
-
-class compute_information(models.Model):
-    Pay_head_id = models.ForeignKey(create_payhead, on_delete=models.CASCADE, null=True, blank=True)
-    compute=models.CharField(max_length=225,default="Null")
-    effective_from=models.CharField(max_length=225,default="NULL")
-    amount_greater=models.CharField(max_length=225,default="NULL")
-    amount_upto=models.CharField(max_length=225,default="NULL")
-    slab_type=models.CharField(max_length=225,default="NULL")
-    value=models.CharField(max_length=225,default="NULL")
-
-
-
-class Rounding(models.Model):
-    pay_head_id = models.ForeignKey(create_payhead, on_delete=models.CASCADE, null=True, blank=True)
-    Rounding_Method =models.CharField(max_length=225,default="Null",blank=True)
-    Round_limit = models.CharField(max_length=22,default="Null",blank=True)
-
-
-class gratuity(models.Model):
-    pay_head_id=models.ForeignKey(create_payhead, on_delete=models.CASCADE, null=True, blank=True)
-    days_of_months=models.CharField(max_length=225)
-    number_of_months_from=models.CharField(max_length=225)
-    to=models.CharField(max_length=225)
-    calculation_per_year=models.CharField(max_length=225)   
-
 
 class stock_item_crt(models.Model):
     name=models.CharField(max_length=100,null=True)
@@ -108,9 +42,58 @@ class group_summary(models.Model):
     per=models.CharField(max_length=100,null=True)
     value=models.CharField(max_length=100,null=True)
     additional=models.CharField(max_length=100,null=True)
+    
+    
+    
+class payhead_crt(models.Model):
+    name=models.CharField(max_length=100,null=True)
+    alias=models.CharField(max_length=100,null=True)
+    payhead_type=models.CharField(max_length=100,null=True)
+    income_type=models.CharField(max_length=100,null=True)
+    under_name=models.CharField(max_length=100,null=True)
+    net_salary=models.CharField(max_length=100,null=True)
+    pay_slip_name=models.CharField(max_length=100,null=True)
+    currency_ledger=models.CharField(max_length=100,null=True)
+    calculation_type=models.CharField(max_length=100,null=True)
+    attendance_type=models.CharField(max_length=100,null=True)
+    production_type=models.CharField(max_length=100,null=True)   
+    
+    
+    
+    
 
-
-
+class create_payhead(models.Model):
+    name=models.CharField(max_length=225)
+    alias=models.CharField(max_length=225)
+    pay_type=models.CharField(max_length=225)
+    income_type=models.CharField(max_length=225)
+    under=models.CharField(max_length=225)
+    affect_net=models.CharField(max_length=225)
+    payslip=models.CharField(max_length=225)
+    calculation_of_gratuity=models.CharField(max_length=225)
+    cal_type=models.CharField(max_length=225)
+    calculation_period=models.CharField(max_length=225)
+    leave_withpay=models.CharField(max_length=225)
+    leave_with_out_pay=models.CharField(max_length=225)
+    production_type=models.CharField(max_length=225)
+    opening_balance=models.CharField(max_length=225)
+    compute=models.CharField(max_length=225,default="Null")
+    effective_from=models.CharField(max_length=225,default="NULL")
+    amount_greater=models.CharField(max_length=225,default="NULL")
+    amount_upto=models.CharField(max_length=225,default="NULL")
+    slab_type=models.CharField(max_length=225,default="NULL")
+    value=models.CharField(max_length=225,default="NULL")
+    Rounding_Method =models.CharField(max_length=225,default="Null",blank=True)
+    Round_limit = models.CharField(max_length=22,default="Null",blank=True)
+    days_of_months=models.CharField(max_length=225)
+    number_of_months_from=models.CharField(max_length=225)
+    to=models.CharField(max_length=225)
+    calculation_per_year=models.CharField(max_length=225)
+    
+    
+    
+    
+        
 class Ledger(models.Model):
     ledger_name = models.CharField(max_length=225,default="Null",blank=True)
     ledger_alias = models.CharField(max_length=225,default="Null",blank=True)
@@ -181,26 +164,20 @@ class Ledger_sundry(models.Model):
     ledger_id = models.ForeignKey(Ledger, on_delete=models.CASCADE, null=True, blank=True)
     maintain_balance_bill_by_bill =models.CharField(max_length=225,default="Null",blank=True)
     Default_credit_period=models.CharField(max_length=225,default="Null",blank=True)
-    Check_for_credit_days=models.CharField(max_length=225,default="Null",blank=True)
-
-
-
+    Check_for_credit_days=models.CharField(max_length=225,default="Null",blank=True)    
     
-
-
-
-
 class add_voucher(models.Model):
     date=models.CharField(max_length=225)
     particular=models.CharField(max_length=225)
     voucher_type=models.CharField(max_length=225)
     voucher_number=models.CharField(max_length=225)
     quntity=models.CharField(max_length=225)
-    value=models.CharField(max_length=225)
-
+    value=models.CharField(max_length=225)   
+        
     def __str__(self):
-        return self.particular
-
+        return self.particular    
+    
+    
 
 class add_voucher2(models.Model):
     date=models.CharField(max_length=225,default="Null",blank=True)
@@ -210,6 +187,14 @@ class add_voucher2(models.Model):
     debit=models.CharField(max_length=225,default="Null",blank=True)
     credit=models.CharField(max_length=225,default="Null",blank=True)
 
-    def __str__(self):
-        return self.particular
+    def _str_(self):
+        return self.particular    
+
+
+class closebalance(models.Model):
+    date=models.CharField(max_length=225,default="Null",blank=True)
+    particular=models.CharField(max_length=225,default="Null",blank=True)
+
+    
+
 

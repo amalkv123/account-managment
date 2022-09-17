@@ -1,49 +1,28 @@
-from django.urls import path,include
-from.import views
-
+from django .urls import path
+from .import views
 
 urlpatterns = [
-
-    path('',views.base,name='base'),
-    path('changecompany',views.changecompany,name='changecompany'),
-    path('createcompony',views.createcompony,name='createcompony'),
-    path('crtecompony',views.crtecompony,name='crtecompony'),
-    path('selectcompony',views.selectcompony,name='selectcompony'),
-    path('stockgroup',views.stockgroup,name='stockgroup'),
+    path('',views.index,name='index'),
     path('profit',views.profit,name='profit'),
-    path('payheads2',views.payheads2,name='payheads2'),
-    path('add_payhead',views.add_payhead,name='add_payhead'),
-    path('profitgroup',views.profitgroup,name='profitgroup'),
-    path('expence',views.expence,name='expence'),
-    path('expensemonth/<int:pk>',views.expensemonth,name='expensemonth'),
-    path('expensemonth2/<int:pk>',views.expensemonth2,name='expensemonth2'),
-    path('purchase',views.purchase,name='purchase'),
-    path('purchasemonth/<int:pk>',views.purchasemonth,name='purchasemonth'),
-    path('purchasemonth2/<int:pk>',views.purchasemonth2,name='purchasemonth2'),
-    path('indirect',views.indirect,name='indirect'),
-    path('indirectmonth/<int:pk>',views.indirectmonth,name='indirectmonth'),
-    path('indirectmonth2/<int:pk>',views.indirectmonth2,name='indirectmonth2'),
     path('stockgroup',views.stockgroup,name='stockgroup'),
-    path('stock_groups',views.stock_groups,name='stock_groups'),
-    path('stockitem',views.stockitem,name='stockitem'),
-    path('stock_items',views.stock_items,name='stock_items'),
+    path('stock_item',views.stock_items,name='stock_items'),
+    path('group',views.stock_groups,name="stock_groups"),
+    path('payhead',views.payhead,name='payhead'),
+    path('items/<int:pk>',views.item_list,name='item_list'),
+    path('payhead_list',views.payhead_list,name='payhead_list'),
     path('ledger',views.ledger,name='ledger'),
     path('save_ledger',views.save_ledger,name='save_ledger'),
-    path('item_list/<int:pk>',views.item_list,name='item_list'),
     path('sales',views.sales,name='sales'),
-    path('simon',views.simon,name='simon'),
-    path('sales_month/<int:pk>',views.sales_month,name='sales_month'),
+    path('indirect',views.indirect,name='indirect'),
     path('grp_month/<int:pk>',views.grp_month,name='grp_month'),
-    path('payhead_list',views.payhead_list,name='payhead_list'),
+    path('sales_month/<int:pk>',views.sales_month,name='sales_month'),
+    path('payhead/<int:pk>',views.payhead_month,name='payhead_month'),
     path('stock_month/<int:pk>',views.stock_month,name='stock_month'),
-    path('stock_month2/<int:pk>',views.stock_month2,name='stock_month2'),
+    path('voucher/<int:pk>',views.pay_voucher,name='pay_voucher'),
     path('stock_voucher/<int:pk>',views.stock_voucher,name='stock_voucher'),
-    
-    
-   
-
-
-
-
-    
+    path('purchase',views.purchase,name='purchase'),
+    path('direct_exp',views.direct_exprenses,name='direct_exprenses'),
+    path('indirect_exp',views.indirect_expenses,name='indirect_expenses'),
+    path('stock_group2',views.stock_group2,name='stock_group2'),
+    path('items_2/<int:pk>',views.items_2,name='items_2')
 ]

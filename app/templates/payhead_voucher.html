@@ -11,6 +11,11 @@
 
     </script>
     <style>
+        .loss2{
+        visibility: hidden;
+       
+        
+    }
         
         
     </style>
@@ -46,67 +51,52 @@
                     </thead>
 
                     <tbody >
+                        {% for p in vouch2 %}
+                        <tr>
+                            <td style="text-align: center;">{{p.date}}</td>
+                            <td ><strong></strong>{{p.particular}}</td>
+                            <td><strong></strong>{{p.voucher_type}}</td>
+                            <td style="text-align: right ;">{{p.voucher_number}}</td>
+                            <td class="debit" style="text-align: right ;">{{p.debit}}<strong>
+                            
+                            <td style="text-align: right ;"><strong>{{p.credit}}</strong></td>
+    
+                            
+    
+    
+                        </tr>
+                        {% endfor %}
                     
-                    <tr >
-                        <td style="text-align: center;"> 1-Apr-2022</td>
-                        <td ><strong></strong>Watson </td>
-                        <td><strong></strong> {{p.ledger_name}}</td>
-                        <td style="text-align: right ;">4</td>
-                        <td class="debit" style="text-align: right ;">32000<strong>
-                        
-                        <td style="text-align: right ;"><strong></strong></td>
-
-                        
-
-
-                    </tr>
-                    <tr >
-                        <td style="text-align: center;"> 1-Apr-2022</td>
-                        <td ><strong></strong>ANN ELEGENT </td>
-                        <td><strong></strong> {{p.ledger_name}}</td>
-                        <td style="text-align: right ;">1</td>
-                        <td class="debit" style="text-align: right ;">12000<strong>
-                        
-                        <td style="text-align: right ;"><strong></strong></td>
-
-                        
-
-
-                    </tr>
-                    <tr >
-                        <td style="text-align: center;"> 1-Apr-2022</td>
-                        <td ><strong></strong>ANN ELEGENT  </td>
-                        <td><strong></strong> {{p.ledger_name}}</td>
-                        <td style="text-align: right ;">6</td>
-                        <td class="debit" style="text-align: right ;">3000<strong>
-                        
-                        <td style="text-align: right ;"><strong></strong></td>
-
-                        
-
-
-                    </tr>
-                    <tr >
-                        <td style="text-align: center;"> 1-Apr-2022</td>
-                        <td ><strong></strong>ANN ELEGENT  </td>
-                        <td><strong></strong> {{p.ledger_name}}</td>
-                        <td style="text-align: right ;">4</td>
-                        <td class="debit" style="text-align: right ;">17000<strong>
-                        
-                        <td style="text-align: right ;"><strong></strong></td>
-
-                        
-
-
-                    </tr>
                  
                 
 
 
                   <div class="" style="margin-top: 0;">
+
+                    <tr class="" style="margin-top: 00; height: 20px;">
+                        <td colspan="4" style="text-align: right;"> Opening Balance : 
+                            
+                           
+                    
+                            <td style="text-align: right;">
+
+                                <strong></strong>
+
+                                <br>
+                                <strong id=""></strong>
+                         
+                            </td>
+                            <td style="text-align: right;" id=""><strong></strong><br>
+                                <strong style="margin-top: 30px;" id="bab2">{{ std.opening_balance}}.00</strong></td>
+
+                          
+                             
+                               
+                        
+                    </tr>
                     
                     <tr class="" style="margin-top: 200;">
-                        <td colspan="4" style="text-align: right;"> Opening Balance : <br>
+                        <td colspan="4" style="text-align: right;"> 
                             Current Balance :
                             
                            
@@ -116,23 +106,15 @@
                                 <strong></strong>
 
                                 <br>
-                                <strong id="bab">64000</strong>
+                                <strong id="bab4">{{total_debit}}.00</strong>
                          
                             </td>
-                            <td style="text-align: right;" id=""><strong></strong><br>
-                                <strong style="margin-top: 30px;" id="bab2">{{ p.ledger_opening_bal }}</strong></td>
+                            <td style="text-align: right;" ><strong  class="loss2"></strong><br>
+                                <strong style="margin-top: 30px;" id="bab">{{total_credit}}.00</strong></td>
 
                           
                              
-                                <!-- <td style="text-align: right;">
-                                    <strong></strong>
-    
-                                    <br>
-                                    <strong>90</strong>
-       
-                                </td> -->
-                                <!-- <td style="text-align: right;" id=""><strong>{{i.ledger_opening_bal}}</strong><br>
-                                    <strong>{{total_credit}}</strong></td> -->
+                                
     
                                   
    
@@ -145,7 +127,7 @@
                         </td>
                           
                             
-                            <td style="text-align: right;"><strong id="bab3"></strong></td>
+                            <td style="text-align: right;"><strong id="bab5">{{opening_balance}}.00</strong></td>
                             <td style="text-align: right;" ><strong></strong></td>
                             
                             <!-- <td style="text-align: right;"><strong></strong></td>
@@ -184,19 +166,26 @@
             </div>
         </div>
     </div>
-    <script>
+    <!-- <script>
         setTimeout(function ad(){ 
     var a=document.getElementById('bab').innerHTML
     var b=document.getElementById('bab2').innerHTML
+    var c=document.getElementById('bab4').innerHTML
+    
     
     var d1 = parseInt(a);
     var d2 = parseInt(b);
+    var d4 = parseInt(c);
     
-    var d=d1-d2;
     
-    document.getElementById("bab3").innerHTML = d+".00";
+    var d=d1+d2;
+    var d5=d4-d;
+    
+    
+    document.getElementById("bab5").innerHTML = d5+".00";
+   
     }, 2000);
     
-    </script>
+    </script> -->
 
 {% endblock %}

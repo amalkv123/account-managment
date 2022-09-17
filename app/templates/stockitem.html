@@ -3,49 +3,7 @@
     {% load static %}
    
     
-  <style>
-    .form-stock {
-        visibility: hidden;       
-        position: fixed;
-        top: 330px;
-        right: 27px;
-        background-color: rgb(216, 232, 238); 
-        border: 1px solid #f1f1f1;
-        z-index: 9;
-        width: 300px;
-      
-      
-      }
-
-      .form-category {
-        visibility: hidden;       
-        position: fixed;
-        top: 330px;
-        right: 27px;
-        background-color: rgb(216, 232, 238); 
-        border: 1px solid #f1f1f1;
-        z-index: 9;
-        width: 300px;
-      
-      
-      }
-      .form-units {
-        visibility: hidden;       
-        position: fixed;
-        top: 330px;
-        right: 27px;
-        background-color: rgb(216, 232, 238); 
-        border: 1px solid #f1f1f1;
-        z-index: 9;
-        width: 300px;
-
-      
-      }
-      .hide{
-        display: none;
-    }
-
-  </style>
+  
     
     <div class="" style="width: 85%;margin-left: 7%;">
         <h6  class="bg-info text-light p-2 m-0 text-left">Stock Items</h6>
@@ -219,7 +177,7 @@
     <!-- list creation -->
 
     <!-- Form Creation stock Groups -->
-<div class="form-stock" id="list-group" style="height: 200px;">
+<div class="form-stock" id="list-group" >
   
     <h6 style="background-color:rgb(17, 169, 240) ;color:white">List of Groups</h6>
 <hr >
@@ -227,10 +185,11 @@
     <table >
     <tr >
         <td>
-          <a href="{% url 'simon' %}"><button
+          <a href="{% url 'stock_groups' %}"><button
                 type="submit"
-                style="color: black;margin-left: 310%; width: 60px; "class="custom-select-md form-control">
-              
+                style="color: black;margin-left: 310%; width: 10%"
+                class="custom-select-md form-control"
+              >
                 create
               </button></a>
         </td>
@@ -239,8 +198,8 @@
     <tr>
       <td>    
 
-        {% for l in std %}
-        <div onclick="hideGroup('{{l.id}}')" style="color: black; margin-left: 20px; font-size: 18px;" >{{l.name}}</div>
+        {% for l in grp %}
+        <div onclick="hideGroup('{{l.id}}')" style="color: black;" >{{l.name}}</div>
         {% endfor %}
       </td>
     </tr>  
