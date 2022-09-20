@@ -3,7 +3,7 @@ from .import views
 
 urlpatterns = [
     path('',views.index,name='index'),
-    path('profit',views.profit,name='profit'),
+    path('lossandprofit_profit',views.lossandprofit_profit,name='lossandprofit_profit'),
     path('stockgroup',views.stockgroup,name='stockgroup'),
     path('stock_item',views.stock_items,name='stock_items'),
     path('group',views.stock_groups,name="stock_groups"),
@@ -11,18 +11,18 @@ urlpatterns = [
     path('items/<int:pk>',views.item_list,name='item_list'),
     path('payhead_list',views.payhead_list,name='payhead_list'),
     path('ledger',views.ledger,name='ledger'),
-    path('save_ledger',views.save_ledger,name='save_ledger'),
+    path('create_ledger',views.create_ledger,name='create_ledger'),
     path('sales',views.sales,name='sales'),
     path('indirect',views.indirect,name='indirect'),
-    path('grp_month/<int:pk>',views.grp_month,name='grp_month'),
-    path('sales_month/<int:pk>',views.sales_month,name='sales_month'),
+    path('lossandprofit_grp_month/<int:pk>',views.lossandprofit_grp_month,name='lossandprofit_grp_month'),
+    path('lossandprofit_sales_month/<int:pk>',views.lossandprofit_sales_month,name='lossandprofit_sales_month'),
     path('payhead/<int:pk>',views.payhead_month,name='payhead_month'),
-    path('stock_month/<int:pk>',views.stock_month,name='stock_month'),
+    path('lossandprofit_stock_month/<int:pk>',views.lossandprofit_stock_month,name='lossandprofit_stock_month'),
     path('voucher/<int:pk>',views.pay_voucher,name='pay_voucher'),
-    path('stock_voucher/<int:pk>',views.stock_voucher,name='stock_voucher'),
-    path('purchase',views.purchase,name='purchase'),
-    path('direct_exp',views.direct_exprenses,name='direct_exprenses'),
-    path('indirect_exp',views.indirect_expenses,name='indirect_expenses'),
-    path('stock_group2',views.stock_group2,name='stock_group2'),
-    path('items_2/<int:pk>',views.items_2,name='items_2')
+    path('lossandprofit_stock_voucher/<int:pk>',views.lossandprofit_stock_voucher,name='lossandprofit_stock_voucher'),
+    path('lossandprofit_purchase',views.lossandprofit_purchase,name='lossandprofit_purchase'),
+    path('lossandprofit_direct_exprenses',views.lossandprofit_direct_exprenses,name='lossandprofit_direct_exprenses'),
+    path('lossandprofit_indirect_expenses',views.lossandprofit_indirect_expenses,name='lossandprofit_indirect_expenses'),
+    path('lossandprofit_stock_group2',views.lossandprofit_stock_group2,name='lossandprofit_stock_group2'),
+    path('lossandprofit_items_2/<int:pk>',views.lossandprofit_items_2,name='lossandprofit_items_2')
 ]

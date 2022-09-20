@@ -3,7 +3,7 @@
 from functools import total_ordering
 from pickle import FALSE
 from django.shortcuts import render,redirect
-from .models import CreateStockGrp,group_summary,payhead_crt,create_payhead,Ledger,ledger_tax,Ledger_Banking_Details,Ledger_Mailing_Address,Ledger_Rounding,Ledger_Satutory,Ledger_sundry,Ledger_Tax_Register,add_voucher,add_voucher2,closebalance
+from .models import CreateStockGrp,group_summary,payhead_crt,create_payhead,tally_ledger,add_voucher,add_voucher2,closebalance
 
 # Create your views here.
 
@@ -11,8 +11,8 @@ from .models import CreateStockGrp,group_summary,payhead_crt,create_payhead,Ledg
 def index(request):
     return render(request,'base.html')
 
-def grp_month(request,pk):
-    std=closebalance.objects.get(id=pk)
+def lossandprofit_grp_month(request,pk):
+    std=tally_ledger.objects.get(id=pk)
     vouch2=add_voucher2.objects.all()
     total_debit=0
     total_credit=0
@@ -20,22 +20,22 @@ def grp_month(request,pk):
         total_debit+=int(i.debit)
         total_credit+=int(i.credit)
         
-    opening_balance=total_debit-(int(std.ledger_opening_bal)+total_credit)
+    opening_balance=total_debit-(int(std.opening_blnc)+total_credit)
     if opening_balance>0 :
-        std.ledger_type=opening_balance
-        std.provide_banking_details=0
+        std.credit_period=opening_balance
+        std.creditdays_voucher=0
 
         std.save()
         
     else :
-        std.provide_banking_details=opening_balance*-1
-        std.ledger_type=0
+        std.creditdays_voucher=opening_balance*-1
+        std.credit_period=0
         std.save()
             
-    return render(request,'group_month.html',{'std':std,'vouch2':vouch2,'total_debit':total_debit,'total_credit':total_credit,'opening_balance':opening_balance})
+    return render(request,'lossandprofit_grp_month.html',{'std':std,'vouch2':vouch2,'total_debit':total_debit,'total_credit':total_credit,'opening_balance':opening_balance})
 
-def sales_month(request,pk):
-    std=Ledger.objects.get(id=pk)
+def lossandprofit_sales_month(request,pk):
+    std=tally_ledger.objects.get(id=pk)
     
     vouch2=add_voucher2.objects.all()
     total_debit=0
@@ -44,12 +44,12 @@ def sales_month(request,pk):
         total_debit+=int(i.debit)
         total_credit+=int(i.credit)
         
-    opening_balance=total_debit-(int(std.ledger_opening_bal)+total_credit)
+    opening_balance=total_debit-(int(std.opening_blnc)+total_credit)
     
     # std.ledger_type=opening_balance
     # std.save()
     
-    return render(request,'sales_month.html',{'std':std,'total_debit':total_debit,'total_credit':total_credit,'opening_balance':opening_balance})
+    return render(request,'lossandprofit_sales_month.html',{'std':std,'total_debit':total_debit,'total_credit':total_credit,'opening_balance':opening_balance})
 
 
 def payhead_month(request,pk):
@@ -86,7 +86,7 @@ def pay_voucher(request,pk):
     
     return render(request,'payhead_voucher.html',{'std':std,'vouch2':vouch2,'total_debit':total_debit,'total_credit':total_credit,'opening_balance':opening_balance})
 
-def stock_voucher(request,pk):
+def lossandprofit_stock_voucher(request,pk):
     std=group_summary.objects.get(id=pk)
     vouch=add_voucher.objects.all()
     total_value=0
@@ -117,13 +117,13 @@ def stock_voucher(request,pk):
         'closing_qun':closing_qun,
         'closing_val':closing_val,
         }        
-    return render(request,'stock_voucher.html',context)
+    return render(request,'lossandprofit_stock_voucher.html',context)
 
 
-def profit(request):
-    balance=Ledger.objects.all()
+def lossandprofit_profit(request):
+    balance=tally_ledger.objects.all()
     balance_py=create_payhead.objects.all()
-    balance_le=Ledger.objects.all()
+    balance_le=tally_ledger.objects.all()
     balance_group=group_summary.objects.all()
     total_grp=0
     total_direct=0
@@ -134,9 +134,9 @@ def profit(request):
     total_indirect=0
     #sales account total
     for i in balance:
-        if(i.group_under=='Sales_Account'):
-            total+=int(i.ledger_type)
-            total+=int(i.provide_banking_details)
+        if(i.under=='Sales_Account'):
+            total+=int(i.credit_period)
+            total+=int(i.creditdays_voucher)
             
     #indirect income total        
     for i in balance_py:
@@ -144,9 +144,9 @@ def profit(request):
             total_income+=int(i.leave_withpay)
             total_income+=int(i.leave_with_out_pay)
     for p in balance_le:
-         if(p.group_under=='income_Indirect'):
-             total_income+=int(p.ledger_type) 
-             total_income+=int(p.provide_banking_details)
+         if(p.under=='income_Indirect'):
+             total_income+=int(p.credit_period) 
+             total_income+=int(p.creditdays_voucher)
              
     #direct income total
              
@@ -156,9 +156,9 @@ def profit(request):
             total_direct+=int(i.leave_with_out_pay) 
     
     for p in balance_le:
-        if(p.group_under=='Direct Incomes'):
-            total_direct+=int(p.ledger_type) 
-            total_direct+=int(p.provide_banking_details)
+        if(p.under=='Direct Incomes'):
+            total_direct+=int(p.credit_period) 
+            total_direct+=int(p.creditdays_voucher)
             
     #closing stock
     for k in  balance_group:
@@ -167,9 +167,9 @@ def profit(request):
     #purchase account total 
     
     for i in balance:
-        if(i.group_under=='Purchase_Account'):
-            total_purch+=int(i.ledger_type)
-            total_purch+=int(i.provide_banking_details)
+        if(i.under=='Purchase_Account'):
+            total_purch+=int(i.credit_period)
+            total_purch+=int(i.creditdays_voucher)
     
     #direct expenses total
            
@@ -179,9 +179,9 @@ def profit(request):
             total_direct_exp+=int(i.leave_with_out_pay)     
     
     for p in balance_le:
-        if(p.group_under=='Direct Expenses'):
-            total_direct_exp+=int(p.ledger_type) 
-            total_direct_exp+=int(p.provide_banking_details) 
+        if(p.under=='Direct_Expenses'):
+            total_direct_exp+=int(p.credit_period) 
+            total_direct_exp+=int(p.creditdays_voucher) 
             
     #indirect expenses total   
     
@@ -190,9 +190,9 @@ def profit(request):
             total_indirect+=int(i.leave_withpay)
             total_indirect+=int(i.leave_with_out_pay)
     for p in balance_le:
-         if(p.group_under=='Expences_Indirect'):
-            total_indirect+=int(p.ledger_type) 
-            total_indirect+=int(p.provide_banking_details)    
+         if(p.under=='Expences_Indirect'):
+            total_indirect+=int(p.credit_period) 
+            total_indirect+=int(p.creditdays_voucher)    
             
     #closing stock
     std=group_summary.objects.all()
@@ -218,7 +218,7 @@ def profit(request):
     closing_quntity=total_qun-total_qunity        
             
                    
-    return render(request,'profit.html',{'total':total,'total_income':total_income,'total_direct':total_direct,'total_grp':total_grp,'total_purch':total_purch,'total_direct_exp':total_direct_exp,'total_indirect':total_indirect,'closing_value':closing_value,'closing_quntity':closing_quntity,}) 
+    return render(request,'lossandprofit_profit.html',{'total':total,'total_income':total_income,'total_direct':total_direct,'total_grp':total_grp,'total_purch':total_purch,'total_direct_exp':total_direct_exp,'total_indirect':total_indirect,'closing_value':closing_value,'closing_quntity':closing_quntity,}) 
 
 
 
@@ -226,9 +226,9 @@ def profit(request):
 
 def  payhead_list(request):
     std=create_payhead.objects.filter(under='Direct Incomes')
-    stm=Ledger.objects.filter(group_under='Direct Incomes')
+    stm=tally_ledger.objects.filter(group_under='Direct Incomes')
     balance=create_payhead.objects.all()
-    balance_le=Ledger.objects.all()
+    balance_le=tally_ledger.objects.all()
     total=0
     total_d=0
     for i in balance:
@@ -246,22 +246,22 @@ def  payhead_list(request):
 
 
 
-def direct_exprenses(request):
+def lossandprofit_direct_exprenses(request):
     std=create_payhead.objects.filter(under='Direct Expenses')
-    stm=Ledger.objects.filter(group_under='Direct Expenses')
+    stm=tally_ledger.objects.filter(under='Direct_Expenses')
     total=0
     total_d=0
     for i in std:
         total+=int(i.leave_withpay)
         total_d+=int(i.leave_with_out_pay)
     for p in stm:
-        total+=int(p.ledger_type) 
-        total_d+=int(p.provide_banking_details)
-    return render(request,'direct_expenses.html',{'std':std,'stm':stm,'total':total,'total_d':total_d}) 
+        total+=int(p.credit_period) 
+        total_d+=int(p.creditdays_voucher)
+    return render(request,'lossandprofit_direct_exprenses.html',{'std':std,'stm':stm,'total':total,'total_d':total_d}) 
 
 def sales(request):
-    std=Ledger.objects.filter(group_under='Sales_Account')
-    balance=Ledger.objects.all()
+    std=tally_ledger.objects.filter(group_under='Sales_Account')
+    balance=v.objects.all()
     total=0
     total_d=0
     for i in balance:
@@ -272,20 +272,20 @@ def sales(request):
                  
     return render(request,'sales_accounts.html',{'std':std,'total':total,'total_d':total_d})
 
-def purchase(request):
-    std=Ledger.objects.filter(group_under='Purchase_Account')
+def lossandprofit_purchase(request):
+    std=tally_ledger.objects.filter(under='Purchase_Account')
     
     total=0
     total_d=0
     for i in std:
-        total+=int(i.ledger_type)
-        total_d+=int(i.provide_banking_details)
-    return render(request,'purchase_list.html',{'std':std,'total':total,'total_d':total_d})
+        total+=int(i.credit_period)
+        total_d+=int(i.creditdays_voucher)
+    return render(request,'lossandprofit_purchase_list.html',{'std':std,'total':total,'total_d':total_d})
 
 
 
 
-def stock_month(request,pk):
+def lossandprofit_stock_month(request,pk):
     std=group_summary.objects.get(id=pk)
     
     vouch=add_voucher.objects.all()
@@ -313,7 +313,7 @@ def stock_month(request,pk):
         'closing_val':closing_val,
         }        
     
-    return render(request,'stock_month.html',context)
+    return render(request,'lossandprofit_stock_month.html',context)
 
 def item_list(request,pk):
     std=group_summary.objects.filter(CreateStockGrp_id=pk)
@@ -344,7 +344,7 @@ def item_list(request,pk):
         
     return render(request,'items.html',{'std':std,'total':total,'total_qty':total_qty,'closing_val':closing_val,'closing_qun':closing_qun,}) 
  
-def items_2(request,pk):
+def lossandprofit_items_2(request,pk):
     ptm=group_summary.objects.filter(CreateStockGrp_id=pk)
     ptc=CreateStockGrp.objects.get(id=pk)
     
@@ -376,7 +376,7 @@ def items_2(request,pk):
     ptc.alias=total
     ptc.save()    
         
-    return render(request,'item_2.html',{'ptm':ptm,'closing_val':closing_val,'closing_qun':closing_qun,'total':total})
+    return render(request,'lossandprofit_items_2.html',{'ptm':ptm,'closing_val':closing_val,'closing_qun':closing_qun,'total':total})
     
 def stockgroup(request):
     ptm=CreateStockGrp.objects.all()
@@ -417,7 +417,7 @@ def stock_item(request):
 
 def indirect(request):
     std=create_payhead.objects.filter(under='Income(Indirect)')
-    stm=Ledger.objects.filter(group_under='income_Indirect')
+    stm=tally_ledger.objects.filter(group_under='income_Indirect')
     
     total=0
     total_d=0
@@ -433,9 +433,9 @@ def indirect(request):
 
 
 
-def indirect_expenses(request):
-    std=create_payhead.objects.filter(under='Indirect Expenses')
-    stm=Ledger.objects.filter(group_under='Expences_Indirect')
+def lossandprofit_indirect_expenses(request):
+    std=create_payhead.objects.filter(under='Expences_Indirect')
+    stm=tally_ledger.objects.filter(under='Expences_Indirect')
     
     total=0
     total_d=0
@@ -443,11 +443,11 @@ def indirect_expenses(request):
         total+=int(i.leave_withpay)
         total_d+=int(i.leave_with_out_pay)
     for p in stm:
-        total+=int(p.ledger_type) 
-        total_d+=int(p.provide_banking_details)
+        total+=int(p.credit_period) 
+        total_d+=int(p.creditdays_voucher)
     
     
-    return render(request,'indirect_expences.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
+    return render(request,'lossandprofit_indirect_expenses.html',{'std':std,'stm':stm,'total':total,'total_d':total_d})
 
 
 
@@ -465,7 +465,7 @@ def stock_groups(request):
 
 
 
-def stock_group2(request):
+def lossandprofit_stock_group2(request):
     ptm=CreateStockGrp.objects.all()
     std=group_summary.objects.all()
     total_val=0
@@ -474,7 +474,7 @@ def stock_group2(request):
         total_val+=int(p.value)
         total_qun+=int(p.quantity)
         
-    return render(request,'stockgroup_2.html',{'std':std,'opening_value':total_val,'opening_quntity':total_qun,'ptm':ptm})
+    return render(request,'lossandprofit_stockgroup_2.html',{'std':std,'opening_value':total_val,'opening_quntity':total_qun,'ptm':ptm})
     
 
 
@@ -604,153 +604,72 @@ def ledger(request):
 
 
 
-def save_ledger(request):
-    if request.method == 'POST':
-        # Ledger Basic
-        Lname = request.POST.get('ledger_name', False)
-        Lalias = request.POST.get('ledger_alias', False)
-        Lunder = request.POST.get('group_under', False)
-        Lopening_bal = request.POST.get('ledger_opening_bal', False)
-        cd_db=request.POST.get('cd_db',False)
-        typ_of_ledg = request.POST.get('ledger_type', False)
-        provide_banking = request.POST.get('provide_banking_details', False)
+def create_ledger(request):
+    if 't_id' in request.session:
+        if request.session.has_key('t_id'):
+            t_id = request.session['t_id']
+        else:
+            return redirect('/')
+        tally = Companies.objects.filter(id=t_id)
+        if request.method=='POST':
+            nm=request.POST.get('name')
+            als=request.POST.get('alias')
+            under=request.POST.get('under')
+            mname=request.POST.get('mailingname')
+            adr=request.POST.get('address')
+            st=request.POST.get('state')
+            cntry=request.POST.get('country')
+            pin=request.POST.get('pincode')
+            pno=request.POST.get('pan_no')
+            bdetls=request.POST.get('bank_details')
+            rtype=request.POST.get('registration_type')
+            gst_uin=request.POST.get('gst_uin')
+            opnbn=request.POST.get('opening_blnc')
 
-        # Banking_details
-        B_od_limit = request.POST.get('od_limit', False)
-        B_ac_holder_name =request.POST.get('holder_name', False)
-        B_ac_no = request.POST.get('ac_number', False)
-        B_ifsc = request.POST.get('ifsc', False)
-        B_swift_code =request.POST.get('swift_code', False)
-        B_name = request.POST.get('bank_name', False)
-        B_branch = request.POST.get('branch_name', False)
-        B_alter_chq_bks =request.POST.get('alter_chk_bks', False)
-        B_name_enbl_chq_prtg = request.POST.get('enbl_chk_printing', False) 
-        B_chqconfg= request.POST.get('chqconfg', False) 
-        # Mailing_details
-        Mname = request.POST.get('name', False)
-        Maddress = request.POST.get('address', False)
-        Mstate =request.POST.get('state', False)
-        Mcountry = request.POST.get('country', False)
-        Mpincode = request.POST.get('pincode', False)
+            spdl=request.POST.get('set_odl')
+            achnm=request.POST.get('ac_holder_nm')
+            acno=request.POST.get('acc_no')
+            ifsc=request.POST.get('ifsc_code')
+            scode=request.POST.get('swift_code')
+            bn=request.POST.get('bank_name')
+            brnch=request.POST.get('branch')
+            sacbk=request.POST.get('SA_cheque_bk')
+            ecp=request.POST.get('Echeque_p')
+            sacpc=request.POST.get('SA_chequeP_con')
 
-        # Tax_Registration_Details
-        Tgst_uin = request.POST.get('gst_uin', False)
-        Treg_typ = request.POST.get('register_type', False)
-        Tpan_no = request.POST.get('pan_no', False)
-        T_alter_gst =request.POST.get('alter_gst_details', False)
+            typofled=request.POST.get('type_of_ledger')
+            rometh=request.POST.get('rounding_method')
+            rolmt=request.POST.get('rounding_limit')
 
-        # Satutory Details
-        assessable_calculationn = request.POST.get('assessable_calculation', False)
-        Appropriate_too =request.POST.get('Appropriate_to', False)
-        gst_applicablee = request.POST.get('is_gst_applicable',False)
-        Set_alter_GSTT=request.POST.get('Set_alter_GST', False)
-        type_of_supplyy = request.POST.get('type_of_supply',False)
-        Method_of_calcc=request.POST.get('Method_of_calc', False)
+            typdutytax=request.POST.get('type_duty_tax')
+            taxtyp=request.POST.get('tax_type')
+            valtype=request.POST.get('valuation_type')
+            rateperu=request.POST.get('rate_per_unit')
+            percalc=request.POST.get('percentage_of_calcution')
+            rondmethod=request.POST.get('rond_method')
+            roimlit=request.POST.get('rond_limit')
 
-        #leadger Rounding
-        ledger_idd=request.POST.get('useadvc', False)
-        Rounding_Methodd=request.POST.get('Rounding_Method', False)
-        Round_limitt =request.POST.get('Round_limit', False)
+            gstapplicbl=request.POST.get('gst_applicable')
+            sagatdet=request.POST.get('setalter_gstdetails')
+            typsupply=request.POST.get('type_of_supply')
+            asseval=request.POST.get('assessable_value')
+            appropto=request.POST.get('appropriate_to')
+            methcalcu=request.POST.get('method_of_calculation')
 
-        #ledger_tax 
-        type_of_duty_or_taxx=request.POST.get('type_of_duty_or_tax', False)
-        type_of_taxx=request.POST.get('type_of_tax', False)
-        valuation_typee=request.POST.get('valuation_type', False)
-        rate_per_unitt=request.POST.get('rate_per_unit', False)
-        Persentage_of_calculationn=request.POST.get('Persentage_of_calculation', False)
-
-        #sundry
-        maintain_balance_bill_by_billl=request.POST.get('maintain_balance_bill_by_bill', False)
-        Default_credit_periodd=request.POST.get('Default_credit_period', False)
-        Check_for_credit_dayss=request.POST.get('Check_for_credit_days', False)
-
-        if Ledger.objects.filter(ledger_name = Lname ).exists():
-                messages.info(request,'This Name is already taken...!')
-                return redirect('load_create_ledger.html')
-
-        Lmdl = Ledger(
-            ledger_name=Lname,
-            ledger_alias=Lalias,
-            group_under=Lunder,
-            ledger_cr_db=cd_db,
-            ledger_opening_bal=Lopening_bal,
-            ledger_type=typ_of_ledg,
-            provide_banking_details=provide_banking,
-        )
-        Lmdl.save()
-        idd = Lmdl
-        Bmdl = Ledger_Banking_Details(
-        
-            ledger_id=idd,
-            od_limit=B_od_limit,
-            holder_name=B_ac_holder_name,
-            ac_number=B_ac_no,
-            ifsc=B_ifsc,
-            swift_code=B_swift_code,
-            bank_name=B_name,
-            branch_name=B_branch,
-            alter_chk_bks=B_alter_chq_bks,
-            enbl_chk_printing=B_name_enbl_chq_prtg,
-
-        )
-        Bmdl.save()
-        M_mdl = Ledger_Mailing_Address(
-
-            name=Mname,
-            address=Maddress,
-            state=Mstate,
-            country=Mcountry,
-            pincode=Mpincode,
-        )
-        M_mdl.save()
-        T_mdl = Ledger_Tax_Register(
-           
-          
-            gst_uin=Tgst_uin,
-            register_type=Treg_typ,
-            pan_no=Tpan_no,
-            alter_gst_details=T_alter_gst,
-
-        )
-        T_mdl.save()
-        LS_mdl = Ledger_Satutory(
-
-            ledger_id=idd,
-            assessable_calculation=assessable_calculationn,
-            Appropriate_to =Appropriate_too ,
-            gst_applicable=gst_applicablee,
-            Set_alter_GST = Set_alter_GSTT,
-            type_of_supply=type_of_supplyy,
-            Method_of_calc = Method_of_calcc,
-
-
-        )
-        LS_mdl.save()
-
-        rnd_mdl = Ledger_Rounding(
-            ledger_id=idd,
-            Rounding_Method=Rounding_Methodd,
-            Round_limit =Round_limitt,
-
-        )
-        rnd_mdl.save()
-
-        tax_mdl = ledger_tax(
-            ledger_id=idd,
-            type_of_duty_or_tax=type_of_duty_or_taxx,
-            type_of_tax =type_of_taxx,
-            valuation_type=valuation_typee,
-            rate_per_unit=rate_per_unitt,
-            Persentage_of_calculation=Persentage_of_calculationn,
-        )
-        tax_mdl.save()
-
-        sndry_mdl = Ledger_sundry(
-            ledger_id=idd,
-            maintain_balance_bill_by_bill=maintain_balance_bill_by_billl,
-            Default_credit_period=Default_credit_periodd,
-            Check_for_credit_days =Check_for_credit_dayss,
-        )
-        sndry_mdl.save()
-        # messages.info(request,'LEDGER CREATED SUCCESSFULLY')
-        return redirect('ledger')
+            balbillbybill=request.POST.get('balance_billbybill')
+            credperiod=request.POST.get('credit_period')
+            creditdaysvouch=request.POST.get('creditdays_voucher')
+            
+            ldr=tally_ledger(name=nm,alias=als,under=under,mname=mname,address=adr,state=st,country=cntry,
+                            pincode=pin,pan_no=pno,bank_details=bdetls,registration_type=rtype,gst_uin=gst_uin,
+                            opening_blnc=opnbn,set_odl=spdl,ac_holder_nm=achnm,acc_no=acno,ifsc_code=ifsc,swift_code=scode,
+                            bank_name=bn,branch=brnch,SA_cheque_bk=sacbk,Echeque_p=ecp,SA_chequeP_con=sacpc,
+                            type_of_ledger=typofled,rounding_method=rometh,rounding_limit=rolmt,type_duty_tax=typdutytax,tax_type=taxtyp,
+                            valuation_type=valtype,rate_per_unit=rateperu,percentage_of_calcution=percalc,rond_method=rondmethod,rond_limit=roimlit,
+                            gst_applicable=gstapplicbl,setalter_gstdetails=sagatdet,type_of_supply=typsupply,assessable_value=asseval,
+                            appropriate_to=appropto,method_of_calculation=methcalcu,balance_billbybill=balbillbybill,credit_period=credperiod,
+                            creditdays_voucher=creditdaysvouch,company_id=t_id)
+            
+            ldr.save()
+            return render(request,'ledger.html',{'tally':tally})
+    return redirect('/')

@@ -43,13 +43,13 @@
 
             <ul class="ul" id="loss3" >
 
-                <li class="list2"><a href="purchase">Purchase Account</a><i id="purch" class="float-right">{{total_purch}}</i></li>
-                <li class="list2"><a href="{% url 'direct_exprenses' %}" >Direct Expenses</a><i id="expenses" class="float-right">{{total_direct_exp}}</i></li>
+                <li class="list2"><a href="lossandprofit_purchase">Purchase Account</a><i id="purch" class="float-right">{{total_purch}}</i></li>
+                <li class="list2"><a href="lossandprofit_direct_exprenses" >Direct Expenses</a><i id="expenses" class="float-right">{{total_direct_exp}}</i></li>
                 <li class="list2"><a href="stock_group2" >Opening Stock</a><i  class="float-right">{{total_grp}}</i></li>
                 <li class="list2 "><a  href="#" >Gross profit</a><i id="gross" class="float-right"></i></li>
                 <li class="list2" style="border-top:1px solid ;"><i id="total2" class="float-right" ></i></li>
                 
-                <li class="list2 mt-5"><a href="{% url 'indirect_expenses' %}" >Indirect Expenses</a><i id="indirect_exp" class="float-right">{{total_indirect}}</i></li>
+                <li class="list2 mt-5"><a href="lossandprofit_indirect_expenses" >Indirect Expenses</a><i id="indirect_exp" class="float-right">{{total_indirect}}</i></li>
                 <div>
                     <li class="list2">Net profit<i id="net_profit" class="float-right"></i></li>
                 </div>
@@ -60,14 +60,14 @@
  <!-- gross profit loss method -->
              <ul  id="loss">
 
-                <li class="list2"><a href="purchase">Purchase Account</a><i id="purch" class="float-right">{{total_purch}}</i></li>
-                <li class="list2"><a href="{% url 'direct_exprenses' %}" >Direct Expenses</a><i id="expenses" class="float-right">{{total_direct_exp}}</i></li>
-                <li class="list2"><a href="stock_group2" >Opening Stock</a><i  class="float-right">{{total_grp}}</i></li>
+                <li class="list2"><a href="lossandprofit_purchase">Purchase Account</a><i id="purch" class="float-right">{{total_purch}}</i></li>
+                <li class="list2"><a href="lossandprofit_direct_exprenses" >Direct Expenses</a><i id="expenses" class="float-right">{{total_direct_exp}}</i></li>
+                <li class="list2"><a href="lossandprofit_stock_group2" >Opening Stock</a><i  class="float-right">{{total_grp}}</i></li>
                
                 <li class="list2" style="border-top:1px solid ;"><i id="tot" class="float-right" ></i></li>
                 
                 <li class="list2 mt-3 "><a  href="#" >Gross Loss</a><i id="gross_loss2" class="float-right"></i></li>
-                <li class="list2"><a href="{% url 'indirect_expenses' %}" >Indirect Expenses</a><i id="indirect_exp" class="float-right">{{total_indirect}}</i></li>
+                <li class="list2"><a href="lossandprofit_indirect_expenses" >Indirect Expenses</a><i id="indirect_exp" class="float-right">{{total_indirect}}</i></li>
                
 
                
